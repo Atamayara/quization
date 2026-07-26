@@ -1,3 +1,6 @@
+import { ClientMessage } from '../shared/types.ts';
+import { messageHandler } from './messageHandler.ts';
+
 export function handler(request: Request): Response {
     // ページへのアクセス
     if (request.headers.get('upgrade') !== 'websocket') {
@@ -8,13 +11,16 @@ export function handler(request: Request): Response {
     // WebSocket接続
     const { socket, response } = Deno.upgradeWebSocket(request);
 
-    socket.onopen = () => console.log('Connected');
+    socket.onopen = () => console.log('[Log] A socket connected');
 
-    socket.onmessage = (event) => console.log(`Received: ${event.data}`);
+    socket.onmessage = (event) => {
+        const data: ClientMessage = JSON.parse(event.data);
+        messageHandler(data, socket);
+    };
 
-    socket.onclose = () => console.log('DISCONNECTED');
+    socket.onclose = () => console.log('[Log] A socket disconnected');
 
-    socket.onerror = (error) => console.error('ERROR:', error);
+    socket.onerror = (error) => console.error('[Error] ', error);
 
     return response;
 }

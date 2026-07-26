@@ -2,11 +2,11 @@
 export interface Player {
     name: string;
     id: string;
-    pushedAt?: number;
+    tappedAt?: number;
     score: number;
     correct: number;
     incorrect: number;
-    life: number;
+    // life: number; [TODO] Enable lives
     isOnline: boolean;
     state: 'ACTIVE' | 'REST';
 }
@@ -17,7 +17,7 @@ export type ClientMessage =
     | {
           type: 'C2S_JOIN';
           payload: {
-              name: string;
+              name?: string;
               id?: string;
               key?: string;
           };
@@ -77,10 +77,11 @@ export type ServerMessage =
     | {
           type: 'S2C_VIEW_UPDATE';
           payload: {
-              question: string;
-              answer: string;
-              speed: number; // Char per seconds (-1: immediately)
-              players: Player[];
+              index?: number;
+              question?: string;
+              answer?: string;
+              speed?: number; // Char per seconds (-1: immediately)
+              players?: Player[];
           };
       }
 
