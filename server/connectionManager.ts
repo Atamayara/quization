@@ -12,6 +12,15 @@ export function registerSocket(id: string, socket: WebSocket) {
     ids.set(socket, id);
 }
 
+// Remove connection with an id
+export function deleteSocket(socket: WebSocket) {
+    const id = getIdBySocket(socket);
+    if (id) {
+        sockets.delete(id);
+    }
+    ids.delete(socket);
+}
+
 // Get an id by a socket
 export function getIdBySocket(socket: WebSocket) {
     return ids.get(socket);
@@ -51,6 +60,8 @@ function sendBySocket(socket: WebSocket, message: ServerMessage) {
     if (socket.readyState === WebSocket.OPEN) {
         socket.send(json);
     } else {
-        console.warn(`[Warn] Failed to send message: ${message.type}`);
+        console.warn(
+            `[Warn] Failed to send message: ${message.type} / state: ${socket.readyState}`,
+        );
     }
 }

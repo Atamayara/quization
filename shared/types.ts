@@ -66,12 +66,13 @@ export type ServerMessage =
               key: string;
           };
       }
-
-    // [TODO] Change Player UI
-    // | {
-    //       type: 'S2C_SET_UI_STATE';
-    //       payload: {};
-    //   }
+    | {
+          type: 'S2C_SET_UI_STATE';
+          payload: {
+              player: Player;
+              // [TODO] Additional UI settings
+          };
+      }
 
     // Update view data
     | {

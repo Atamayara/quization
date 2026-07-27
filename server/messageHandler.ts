@@ -17,17 +17,22 @@ export function messageHandler(data: ClientMessage, socket: WebSocket) {
                 data.payload.id,
                 data.payload.key,
             );
-            if (result.state === 'SUCCESS') {
-                registerSocket(result.id, socket);
-                const message: ServerMessage = {
-                    type: 'S2C_JOIN_ACK',
-                    payload: {
-                        id: result.id,
-                        key: result.key,
-                    },
-                };
-                sendToPlayer(message);
-            }
+            registerSocket(result.id, socket);
+            const ackMessage: ServerMessage = {
+                type: 'S2C_JOIN_ACK',
+                payload: {
+                    id: result.id,
+                    key: result.key,
+                },
+            };
+            sendToPlayer(ackMessage);
+            const uiMessage: ServerMessage = {
+                type: 'S2C_SET_UI_STATE',
+                payload: {
+                    player: result,
+                },
+            };
+            sendToPlayer(uiMessage);
             break;
         }
 
@@ -51,13 +56,19 @@ export function messageHandler(data: ClientMessage, socket: WebSocket) {
                     sendToView(message);
                     sendToHost(message);
                 }
-                // [TODO] Update player UI
-                // result.players?.forEach(p => {
-                //     if (!p.isOnline) return;
-                //     sendToPlayer({
-                //         type: ''
-                //     }, p.id)
-                // });
+                result.players?.forEach((p) => {
+                    if (!p.isOnline) return;
+                    sendToPlayer(
+                        {
+                            type: 'S2C_SET_UI_STATE',
+                            payload: {
+                                player: p,
+                                // [TODO] Additional UI settings
+                            },
+                        },
+                        p.id,
+                    );
+                });
             }
             break;
         }

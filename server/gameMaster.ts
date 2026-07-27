@@ -1,4 +1,4 @@
-import { Player, ServerMessage } from '../shared/types.ts';
+import { Player } from '../shared/types.ts';
 
 const players: InternalPlayer[] = [];
 const questionIndex: number = 0;
@@ -6,16 +6,6 @@ const questionIndex: number = 0;
 interface InternalPlayer extends Player {
     key: string;
 }
-
-type JoinPlayerResult =
-    | {
-          state: 'SUCCESS';
-          id: string;
-          key: string;
-      }
-    | {
-          state: 'FAILURE';
-      };
 
 type TapResult = {
     stopping?: boolean;
@@ -34,20 +24,22 @@ export function joinPlayer(
     name?: string,
     id?: string,
     key?: string,
-): JoinPlayerResult {
+): InternalPlayer {
     // Rejoin
     if (id && key) {
         const player = players.find((p) => p.id === id);
         if (player?.key === key) {
-            return { state: 'SUCCESS', id: player.id, key: player.key };
-        } else {
-            return { state: 'FAILURE' };
+            if (name) {
+                player.name = name;
+            }
+            return player;
         }
     }
+    console.log();
     // Create player data
     const player: InternalPlayer = {
         key: crypto.randomUUID(),
-        name: name ?? `プレイヤー ${players.length}`,
+        name: name ?? `プレイヤー ${players.length + 1}`,
         id: crypto.randomUUID(),
         score: 0,
         correct: 0,
@@ -56,7 +48,7 @@ export function joinPlayer(
         state: 'ACTIVE',
     };
     players.push(player);
-    return { state: 'SUCCESS', id: player.id, key: player.key };
+    return player;
 }
 
 // Process when button is tapped
