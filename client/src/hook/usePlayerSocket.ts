@@ -9,6 +9,7 @@ function usePlayerSocket() {
 
     const { isConnected, sendMessage } = useSocket({
         onMessage: ProcessMessage,
+        path: 'player',
     });
 
     // Send join message

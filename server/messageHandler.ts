@@ -8,14 +8,18 @@ import {
 } from './connectionManager.ts';
 import { joinPlayer, tapped } from './gameMaster.ts';
 
-export function messageHandler(data: ClientMessage, socket: WebSocket) {
-    switch (data.type) {
+// Process messages from players
+export function playerMessageHandler(
+    message: ClientMessage,
+    socket: WebSocket,
+) {
+    switch (message.type) {
         // (Re)Join
         case 'C2S_JOIN': {
             const result = joinPlayer(
-                data.payload.name,
-                data.payload.id,
-                data.payload.key,
+                message.payload.name,
+                message.payload.id,
+                message.payload.key,
             );
             registerSocket(result.id, socket);
             const ackMessage: ServerMessage = {
@@ -72,7 +76,12 @@ export function messageHandler(data: ClientMessage, socket: WebSocket) {
             }
             break;
         }
+    }
+}
 
+// Process messages from a host
+export function hostMessageHandler(message: ClientMessage, socket: WebSocket) {
+    switch (message.type) {
         // Global actions by the host
         case 'C2S_HOST_GLOBAL_ACTION': {
             break;

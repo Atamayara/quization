@@ -34,8 +34,8 @@ export type ClientMessage =
           payload: {
               action:
                   | 'START_READING'
+                  | 'PAUSE_READING'
                   | 'STOP_READING'
-                  | 'RESET_READING'
                   | 'NEXT_QUESTION'
                   | 'BEFORE_QUESTION';
           };

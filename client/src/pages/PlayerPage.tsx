@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import usePlayerSocket from '../hook/usePlayerSocket';
+import usePlayerSocket from './../hook/usePlayerSocket';
 
 function PlayerPage() {
     const { player, join, tapped, isConnected, isJoined } = usePlayerSocket();
@@ -33,7 +33,7 @@ function PlayerPage() {
                         <button onClick={joinButton}>接続</button>
                     </>
                 )
-            ) : isJoined ? (
+            ) : isJoined ? ( // [TODO] Error processing
                 // Rejoining (Not connected and joined)
                 <>
                     <p>再参加中</p>

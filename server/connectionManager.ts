@@ -3,16 +3,16 @@ import { ServerMessage } from '../shared/types.ts';
 const sockets = new Map<string, WebSocket>();
 const ids = new Map<WebSocket, string>();
 
-const viewSocket: WebSocket | null = null;
-const hostSocket: WebSocket | null = null;
+let viewSocket: WebSocket | null = null;
+let hostSocket: WebSocket | null = null;
 
-// Register connection with an id
+// Register connection
 export function registerSocket(id: string, socket: WebSocket) {
     sockets.set(id, socket);
     ids.set(socket, id);
 }
 
-// Remove connection with an id
+// Remove connection
 export function deleteSocket(socket: WebSocket) {
     const id = getIdBySocket(socket);
     if (id) {
@@ -40,17 +40,47 @@ export function sendToPlayer(message: ServerMessage, id?: string) {
     }
 }
 
-// Send message to view client
-export function sendToView(message: ServerMessage) {
-    if (viewSocket) {
-        sendBySocket(viewSocket, message);
+// Register connection with a host client
+export function tryRegisterHostSocket(socket: WebSocket): boolean {
+    if (hostSocket === null) {
+        hostSocket = socket;
+        return true;
+    } else {
+        return false;
     }
 }
 
-// Send message to host client
+// Remove connection with a host client
+export function deleteHostSocket() {
+    hostSocket = null;
+}
+
+// Send message to a host client
 export function sendToHost(message: ServerMessage) {
     if (hostSocket) {
         sendBySocket(hostSocket, message);
+    }
+}
+
+// Register connection with a view client
+export function tryRegisterViewSocket(socket: WebSocket): boolean {
+    if (viewSocket === null || viewSocket.readyState !== WebSocket.OPEN) {
+        viewSocket = socket;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Remove connection with a view client
+export function deleteViewSocket() {
+    viewSocket = null;
+}
+
+// Send message to a view client
+export function sendToView(message: ServerMessage) {
+    if (viewSocket) {
+        sendBySocket(viewSocket, message);
     }
 }
 

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ClientMessage, ServerMessage } from '../../../shared/types.ts';
+import type { ClientMessage, ServerMessage } from '../../../shared/types';
 
 type useWebSocketArgs = {
+    path: string;
     onConnected?: () => void;
     onMessage?: (message: ServerMessage) => void;
     onDisconnected?: () => void;
@@ -25,7 +26,7 @@ export function useSocket(args: useWebSocketArgs) {
 
     // Connect to the server and
     useEffect(() => {
-        const wsUri = `ws://localhost:8000/`;
+        const wsUri = `ws://${window.location.hostname}:8000/ws/${args.path}`;
         const socket = new WebSocket(wsUri);
         socketRef.current = socket;
 
@@ -50,6 +51,10 @@ export function useSocket(args: useWebSocketArgs) {
             if (onDisconnectRef.current) {
                 onDisconnectRef.current();
             }
+        };
+
+        return () => {
+            socket.close();
         };
     }, []);
 
