@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import useViewSocket from './../hook/useViewSocket';
 import QuestionText, {
     type QuestionTextHandle,
-} from '../components/questionText';
+} from './../components/QuestionText';
 
 function HostPage() {
     const { quiz, isConnected, players } = useViewSocket({
@@ -71,7 +71,7 @@ function HostPage() {
                 </>
             ) : (
                 // [TODO] Error processing
-                <p>接続エラー</p>
+                <p>Connection error</p>
             )}
         </>
     );

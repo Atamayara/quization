@@ -41,7 +41,7 @@ function HostPage() {
                 </>
             ) : (
                 // [TODO] Error processing
-                <p>接続エラー</p>
+                <p>Connection error</p>
             )}
         </>
     );

@@ -33,19 +33,22 @@ const QuestionText = forwardRef<QuestionTextHandle, QuestionTextArgs>(
         }));
 
         useEffect(() => {
-            indexRef.current = 0;
-            if (textBoxRef.current) {
-                textBoxRef.current.textContent = '';
-            }
-
+            // Reset timer
             if (timerId.current) {
                 clearInterval(timerId.current);
                 timerId.current = null;
             }
 
+            // Clear question
+            indexRef.current = 0;
+            if (textBoxRef.current) {
+                textBoxRef.current.textContent = '';
+            }
+
             if (!isReading) return;
 
-            const step = () => {
+            // Show question char by char
+            function step() {
                 if (textBoxRef.current) {
                     textBoxRef.current.textContent = text.slice(
                         0,
@@ -57,8 +60,9 @@ const QuestionText = forwardRef<QuestionTextHandle, QuestionTextArgs>(
                     clearInterval(timerId.current);
                     timerId.current = null;
                 }
-            };
+            }
 
+            // Execute once and set timer
             step();
             const intervalMs = 1000 / speed;
             timerId.current = window.setInterval(step, intervalMs);

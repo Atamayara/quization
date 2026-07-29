@@ -23,25 +23,25 @@ function PlayerPage() {
                         <button
                             onClick={tapped}
                             style={{ width: '5rem', height: '5rem' }}>
-                            回答
+                            Answer
                         </button>
                     </>
                 ) : (
                     // Connecting menu (Connected and not joined)
                     <>
                         <input ref={nameInputRef} placeholder="name" />
-                        <button onClick={joinButton}>接続</button>
+                        <button onClick={joinButton}>Connect</button>
                     </>
                 )
             ) : isJoined ? ( // [TODO] Error processing
                 // Rejoining (Not connected and joined)
                 <>
-                    <p>再参加中</p>
+                    <p>Rejoining...</p>
                 </>
             ) : (
                 // Connection error (Not connected and not joined)
                 <>
-                    <p>接続エラー</p>
+                    <p>Connection error</p>
                 </>
             )}
         </>
