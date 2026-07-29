@@ -91,7 +91,7 @@ export type ServerMessage =
           type: 'S2C_VIEW_ACTION';
           payload:
               | {
-                    action: 'START_READING' | 'STOP_READING' | 'END_READING';
+                    action: 'START_READING' | 'STOP_READING' | 'PAUSE_READING';
                 }
               | {
                     action: 'CORRECT' | 'INCORRECT';
