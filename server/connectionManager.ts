@@ -84,6 +84,12 @@ export function sendToView(message: ServerMessage) {
     }
 }
 
+// Send message to a view and host client
+export function sendToHostAndView(message: ServerMessage) {
+    sendToHost(message);
+    sendToView(message);
+}
+
 // Send message to a socket
 function sendBySocket(socket: WebSocket, message: ServerMessage) {
     const json = JSON.stringify(message);

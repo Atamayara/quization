@@ -51,7 +51,7 @@ export function handler(request: Request): Response {
                 socket.onmessage = (event) => {
                     console.log('[Log] A host message received');
                     const data: ClientMessage = JSON.parse(event.data);
-                    hostMessageHandler(data, socket);
+                    hostMessageHandler(data);
                 };
 
                 socket.onclose = (event) => {
