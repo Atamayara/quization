@@ -1,3 +1,4 @@
+import { serveDir, serveFile } from '@std/http/file-server';
 import { ClientMessage } from '../shared/types.ts';
 import {
     deleteHostSocket,
@@ -10,11 +11,18 @@ import {
 import { getPlayersAll, getQuiz } from './gameMaster.ts';
 import { hostMessageHandler, playerMessageHandler } from './messageHandler.ts';
 
-export function handler(request: Request): Response {
+Deno.serve((request: Request) => {
     // Access to pages
     const url = new URL(request.url);
     if (request.headers.get('upgrade') !== 'websocket') {
-        return new Response('');
+        const hasExtension = url.pathname.includes('.');
+        if (!hasExtension) {
+            return serveFile(request, './public/index.html');
+        }
+        return serveDir(request, {
+            fsRoot: './public',
+            quiet: true,
+        });
     }
 
     // WebSocket connection
@@ -118,8 +126,4 @@ export function handler(request: Request): Response {
     }
 
     return response;
-}
-
-if (import.meta.main) {
-    Deno.serve(handler);
-}
+});
