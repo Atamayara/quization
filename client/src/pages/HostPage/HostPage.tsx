@@ -1,4 +1,4 @@
-import useHostSocket from './../hook/useHostSocket';
+import useHostSocket from '../../hook/useHostSocket';
 
 function HostPage() {
     const { action, quiz, isConnected, players } = useHostSocket();

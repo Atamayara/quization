@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
-import useViewSocket from './../hook/useViewSocket';
+import useViewSocket from '../../hook/useViewSocket';
 import QuestionText, {
     type QuestionTextHandle,
-} from './../components/QuestionText';
-import AnswerText, { type AnswerTextHandle } from '../components/AnswerText';
+} from '../../components/QuestionText';
+import AnswerText, { type AnswerTextHandle } from '../../components/AnswerText';
 
 function HostPage() {
     const { quiz, isConnected, players } = useViewSocket({

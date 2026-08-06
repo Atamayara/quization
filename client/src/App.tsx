@@ -1,8 +1,8 @@
 import { Route, Routes } from 'react-router';
 
-import PlayerPage from './pages/PlayerPage';
-import HostPage from './pages/HostPage';
-import ViewPage from './pages/ViewPage';
+import PlayerPage from './pages/PlayerPage/PlayerPage';
+import HostPage from './pages/HostPage/HostPage';
+import ViewPage from './pages/ViewPage/ViewPage';
 
 function App() {
     return (
