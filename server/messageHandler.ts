@@ -2,7 +2,6 @@ import { ClientMessage, ServerMessage } from '../shared/types.ts';
 import {
     getIdBySocket,
     registerSocket,
-    sendToHost,
     sendToHostAndView,
     sendToPlayer,
     sendToView,
@@ -13,6 +12,8 @@ import {
     joinPlayer,
     moveQuiz,
     tapped,
+    mark,
+    changeScore,
 } from './gameMaster.ts';
 
 // Process messages from players
@@ -60,7 +61,7 @@ export function playerMessageHandler(
                 if (result.stopping) {
                     sendToView({
                         type: 'S2C_VIEW_ACTION',
-                        payload: { action: 'STOP_READING' },
+                        payload: { action: 'PAUSE_READING' },
                     });
                 }
                 if (result.players) {
@@ -123,19 +124,54 @@ export function hostMessageHandler(message: ClientMessage) {
         }
 
         // Actions for a player by the host
-        case 'C2S_HOST_PLAYER_ACTION':
+        case 'C2S_HOST_PLAYER_ACTION': {
+            const id = message.payload.id;
             switch (message.payload.action) {
-                case 'MARK_CORRECT':
-
-                case 'MARK_INCORRECT':
-                case 'ADJUST_SCORE':
+                case 'MARK_CORRECT': {
+                    mark(id, true);
+                    break;
+                }
+                case 'MARK_INCORRECT': {
+                    mark(id, false);
+                    break;
+                }
+                case 'ADJUST_SCORE': {
+                    changeScore(id, message.payload.value);
+                    break;
+                }
+            }
+            const players = getPlayersAll();
+            sendToHostAndView({
+                type: 'S2C_VIEW_UPDATE',
+                payload: {
+                    players: players,
+                },
+            });
+            const player = players.find((p) => p.id === id);
+            if (player) {
+                sendToPlayer(
+                    {
+                        type: 'S2C_SET_UI_STATE',
+                        payload: {
+                            player: player,
+                        },
+                    },
+                    id,
+                );
             }
             break;
+        }
     }
 }
 
 function sendQuiz() {
     const quiz = getQuiz();
+    sendToView({
+        type: 'S2C_VIEW_ACTION',
+        payload: {
+            action: 'PAUSE_READING',
+        },
+    });
     sendToHostAndView({
         type: 'S2C_VIEW_UPDATE',
         payload: {

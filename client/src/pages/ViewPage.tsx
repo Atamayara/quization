@@ -3,6 +3,7 @@ import useViewSocket from './../hook/useViewSocket';
 import QuestionText, {
     type QuestionTextHandle,
 } from './../components/QuestionText';
+import AnswerText, { type AnswerTextHandle } from '../components/AnswerText';
 
 function HostPage() {
     const { quiz, isConnected, players } = useViewSocket({
@@ -14,6 +15,7 @@ function HostPage() {
     });
 
     const questionTextHandleRef = useRef<QuestionTextHandle | null>(null);
+    const answerTextHandleRef = useRef<AnswerTextHandle | null>(null);
 
     const [isReading, setIsReading] = useState<boolean>(false);
 
@@ -30,6 +32,7 @@ function HostPage() {
     // Stop reading
     function stop() {
         questionTextHandleRef.current?.showAll();
+        answerTextHandleRef.current?.show();
     }
 
     // [TODO] Styling
@@ -52,16 +55,22 @@ function HostPage() {
                     <p>{quiz.index}</p>
                     <QuestionText
                         ref={questionTextHandleRef}
+                        className=""
                         text={quiz.question ?? ''}
                         speed={quiz.speed ?? 5}
                         isReading={isReading}
                     />
-                    <p>{quiz.answer}</p>
+                    <AnswerText
+                        key={quiz.index}
+                        ref={answerTextHandleRef}
+                        className=""
+                        answer={quiz.answer ?? ''}
+                    />
                     <p>{temp}</p>
                     <div>
-                        {players.map((player) => {
+                        {players.map((player, index) => {
                             return (
-                                <div>
+                                <div key={index}>
                                     <p>{player.name}</p>
                                     <p>{player.score}</p>
                                 </div>

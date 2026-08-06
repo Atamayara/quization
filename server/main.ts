@@ -2,9 +2,12 @@ import { ClientMessage } from '../shared/types.ts';
 import {
     deleteHostSocket,
     deleteViewSocket,
+    sendToHost,
+    sendToView,
     tryRegisterHostSocket,
     tryRegisterViewSocket,
 } from './connectionManager.ts';
+import { getPlayersAll, getQuiz } from './gameMaster.ts';
 import { hostMessageHandler, playerMessageHandler } from './messageHandler.ts';
 
 export function handler(request: Request): Response {
@@ -42,6 +45,16 @@ export function handler(request: Request): Response {
                     const result = tryRegisterHostSocket(socket);
                     if (result) {
                         console.log('[Log] A host connected');
+                        const quiz = getQuiz();
+                        sendToHost({
+                            type: 'S2C_VIEW_UPDATE',
+                            payload: {
+                                index: quiz.index,
+                                question: quiz.question,
+                                answer: quiz.answer,
+                                players: getPlayersAll(),
+                            },
+                        });
                     } else {
                         console.warn('[Warn] A host already connected');
                         socket.close(4002, 'DUPLICATE_CONNECTION');
@@ -75,6 +88,16 @@ export function handler(request: Request): Response {
                     const result = tryRegisterViewSocket(socket);
                     if (result) {
                         console.log('[Log] A View connected');
+                        const quiz = getQuiz();
+                        sendToView({
+                            type: 'S2C_VIEW_UPDATE',
+                            payload: {
+                                index: quiz.index,
+                                question: quiz.question,
+                                answer: quiz.answer,
+                                players: getPlayersAll(),
+                            },
+                        });
                     } else {
                         console.warn('[Warn] A view already connected');
                         socket.close(4002, 'DUPLICATE_CONNECTION');

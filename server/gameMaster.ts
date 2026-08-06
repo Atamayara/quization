@@ -6,7 +6,7 @@ let quizIndex: number = 0;
 const correctScore: number = 10;
 const incorrectScore: number = -10;
 
-// temp
+// [TEMP] Sample quiz
 for (let i = 0; i < 10; i++) {
     quizzes.push({
         question: `question ${i}`,
@@ -50,7 +50,7 @@ export function joinPlayer(
     // Create player data
     const player: InternalPlayer = {
         key: crypto.randomUUID(),
-        name: name ?? `プレイヤー ${players.length + 1}`,
+        name: name ?? `Player ${players.length + 1}`,
         id: crypto.randomUUID(),
         score: 0,
         correct: 0,
@@ -81,7 +81,7 @@ export function changeScore(id: string, score: number) {
 }
 
 // Mark
-export function Mark(id: string, result: boolean) {
+export function mark(id: string, result: boolean) {
     const player = getPlayerById(id);
     if (player) {
         if (result) {
@@ -96,7 +96,7 @@ export function Mark(id: string, result: boolean) {
 // Process when button is tapped
 export function tapped(id: string, time: number): TapResult {
     const player = getPlayerById(id);
-    if (player && player.tappedAt) {
+    if (player) {
         player.tappedAt = time;
 
         return {
