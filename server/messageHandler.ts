@@ -30,19 +30,25 @@ export function playerMessageHandler(
                 message.payload.key,
             );
             registerSocket(result.id, socket);
-            sendToPlayer({
-                type: 'S2C_JOIN_ACK',
-                payload: {
-                    id: result.id,
-                    key: result.key,
+            sendToPlayer(
+                {
+                    type: 'S2C_JOIN_ACK',
+                    payload: {
+                        id: result.id,
+                        key: result.key,
+                    },
                 },
-            });
-            sendToPlayer({
-                type: 'S2C_SET_UI_STATE',
-                payload: {
-                    player: result,
+                result.id,
+            );
+            sendToPlayer(
+                {
+                    type: 'S2C_SET_UI_STATE',
+                    payload: {
+                        player: result,
+                    },
                 },
-            });
+                result.id,
+            );
             sendToHostAndView({
                 type: 'S2C_VIEW_UPDATE',
                 payload: {

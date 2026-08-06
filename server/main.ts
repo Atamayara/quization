@@ -2,6 +2,7 @@ import { serveDir, serveFile } from '@std/http/file-server';
 import { ClientMessage } from '../shared/types.ts';
 import {
     deleteHostSocket,
+    deleteSocket,
     deleteViewSocket,
     sendToHost,
     sendToView,
@@ -41,6 +42,7 @@ Deno.serve((request: Request) => {
 
             socket.onclose = () => {
                 console.log('[Log] A players disconnected');
+                deleteSocket(socket);
             };
 
             socket.onerror = (error) => console.error('[Error] ', error);
