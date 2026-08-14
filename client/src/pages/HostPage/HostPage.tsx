@@ -4,7 +4,6 @@ import styles from './HostPage.module.css';
 function HostPage() {
     const { action, quiz, isConnected, players } = useHostSocket();
     return (
-        // [TODO] Styling
         <div className={styles.container}>
             {isConnected ? (
                 <>

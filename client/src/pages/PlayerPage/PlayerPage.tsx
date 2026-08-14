@@ -30,16 +30,16 @@ function PlayerPage() {
                         </button>
                     </>
                 ) : (
-                    // Connecting menu (Connected and not joined)
+                    // Connecting menu (Connected but not joined)
                     <>
                         <input ref={nameInputRef} placeholder="name" />
                         <button onClick={joinButton}>Connect</button>
                     </>
                 )
             ) : isJoined ? ( // [TODO] Error processing
-                // Rejoining (Not connected and joined)
+                // Reload required (Not connected but joined)
                 <>
-                    <p>Rejoining...</p>
+                    <p>Please reload to rejoin</p>
                 </>
             ) : (
                 // Connection error (Not connected and not joined)

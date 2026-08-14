@@ -50,7 +50,6 @@ function ViewPage() {
     }
 
     return (
-        // [TODO] Styling
         <div className={styles.container}>
             {isConnected ? (
                 <>
