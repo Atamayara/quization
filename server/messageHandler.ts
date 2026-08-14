@@ -220,6 +220,7 @@ function sendQuiz() {
             index: quiz.index,
             question: quiz.question,
             answer: quiz.answer,
+            players: getPlayersAll(),
         },
     });
 }
