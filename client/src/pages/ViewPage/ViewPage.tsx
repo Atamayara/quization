@@ -76,7 +76,7 @@ function ViewPage() {
                     )}
                     {quiz.index && quiz.index > 0 ? (
                         <div className={styles.quiz}>
-                            <div className={styles.index}>第{quiz.index}問</div>
+                            <div className={styles.index}>Q{quiz.index}.</div>
                             <QuestionText
                                 ref={questionTextHandleRef}
                                 className={styles.question}
