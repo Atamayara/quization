@@ -19,6 +19,9 @@ function ViewPage() {
     const answerTextHandleRef = useRef<AnswerTextHandle | null>(null);
 
     const [isReading, setIsReading] = useState<boolean>(false);
+    const [correctDisplayed, setCorrectDisplayed] = useState<boolean>(false);
+    const [incorrectDisplayed, setIncorrectDisplayed] =
+        useState<boolean>(false);
 
     // Start reading
     function start() {
@@ -36,17 +39,14 @@ function ViewPage() {
         answerTextHandleRef.current?.show();
     }
 
-    // [TODO] Styling
-    const [temp, setTemp] = useState<string>('');
-
     // Mark as correct
     function correct() {
-        setTemp(temp + 'o');
+        setCorrectDisplayed(true);
     }
 
     // Mark as incorrect
     function incorrect() {
-        setTemp(temp + 'x');
+        setCorrectDisplayed(true);
     }
 
     return (
@@ -54,6 +54,27 @@ function ViewPage() {
         <div className={styles.container}>
             {isConnected ? (
                 <>
+                    <div className={styles.figure}>
+                        {correctDisplayed && (
+                            <div
+                                key={quiz.index}
+                                className={styles.circle}
+                                onAnimationEnd={() =>
+                                    setCorrectDisplayed(false)
+                                }></div>
+                        )}
+                        {incorrectDisplayed && (
+                            <div
+                                key={quiz.index}
+                                className={styles.cross}
+                                onAnimationEnd={() =>
+                                    setIncorrectDisplayed(false)
+                                }>
+                                <div className={styles.tl}></div>
+                                <div className={styles.tr}></div>
+                            </div>
+                        )}
+                    </div>
                     {tapper && (
                         <div className={styles.tap}>
                             <div className={styles.window}>
