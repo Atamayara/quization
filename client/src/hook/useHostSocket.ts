@@ -19,19 +19,23 @@ function useHostSocket() {
     function ProcessMessage(message: ServerMessage) {
         switch (message?.type) {
             case 'S2C_VIEW_UPDATE': {
-                if (message.payload.index) {
+                if (message.payload.index !== undefined) {
                     setIndex(message.payload.index);
+                    if (message.payload.index === 0) {
+                        setQuestion('');
+                        setAnswer('');
+                    }
                 }
-                if (message.payload.question) {
+                if (message.payload.question !== undefined) {
                     setQuestion(message.payload.question);
                 }
-                if (message.payload.answer) {
+                if (message.payload.answer !== undefined) {
                     setAnswer(message.payload.answer);
                 }
-                if (message.payload.speed) {
+                if (message.payload.speed !== undefined) {
                     setSpeed(message.payload.speed);
                 }
-                if (message.payload.players) {
+                if (message.payload.players !== undefined) {
                     setPlayers(message.payload.players);
                 }
                 break;

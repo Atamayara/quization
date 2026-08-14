@@ -10,8 +10,10 @@ import {
     tryRegisterHostSocket,
     tryRegisterViewSocket,
 } from './connectionManager.ts';
-import { getPlayersAll, getQuiz, setIsOnline } from './gameMaster.ts';
+import { getPlayersAll, getQuiz, loadQuiz, setIsOnline } from './gameMaster.ts';
 import { hostMessageHandler, playerMessageHandler } from './messageHandler.ts';
+
+loadQuiz();
 
 Deno.serve((request: Request) => {
     // Access to pages
