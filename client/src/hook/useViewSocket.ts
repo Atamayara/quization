@@ -79,6 +79,11 @@ function useHostSocket(args: useHostSocketArgs) {
                         args.incorrect(message.payload.id);
                         break;
                     }
+
+                    case 'RESET_TAP_STATE': {
+                        setTapper(null);
+                        break;
+                    }
                 }
                 break;
             }

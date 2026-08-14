@@ -20,6 +20,7 @@ function HostPage() {
                             <button onClick={action.pause}>⏸️</button>
                             <button onClick={action.stop}>⏹️</button>
                             <button onClick={action.next}>⏭️</button>
+                            <button onClick={action.reset}>🔄</button>
                         </div>
                     </div>
 

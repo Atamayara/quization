@@ -16,6 +16,7 @@ import {
     changeScore,
     getAnswererId,
     setTime,
+    resetTapped,
 } from './gameMaster.ts';
 
 // Process messages from players
@@ -138,6 +139,23 @@ export function hostMessageHandler(message: ClientMessage) {
                 case 'BEFORE_QUESTION': {
                     moveQuiz(-1);
                     sendQuiz();
+                    break;
+                }
+
+                case 'RESET_TAP_STATE': {
+                    resetTapped();
+                    sendToHostAndView({
+                        type: 'S2C_VIEW_UPDATE',
+                        payload: {
+                            players: getPlayersAll(),
+                        },
+                    });
+                    sendToView({
+                        type: 'S2C_VIEW_ACTION',
+                        payload: {
+                            action: 'RESET_TAP_STATE',
+                        },
+                    });
                     break;
                 }
             }

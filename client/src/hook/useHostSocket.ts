@@ -100,6 +100,16 @@ function useHostSocket() {
         });
     }
 
+    // Reset tap state
+    function reset() {
+        sendMessage({
+            type: 'C2S_HOST_GLOBAL_ACTION',
+            payload: {
+                action: 'RESET_TAP_STATE',
+            },
+        });
+    }
+
     return {
         action: {
             mark,
@@ -108,6 +118,7 @@ function useHostSocket() {
             stop,
             next,
             prev,
+            reset,
         },
         quiz: {
             index,
