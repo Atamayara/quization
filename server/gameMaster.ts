@@ -6,8 +6,10 @@ let quizIndex: number = 0;
 const correctScore: number = 10;
 const incorrectScore: number = -10;
 
+let startTime: Temporal.Instant | null = null;
+
 // [TEMP] Sample quiz
-for (let i = 0; i < 10; i++) {
+for (let i = 1; i < 10; i++) {
     quizzes.push({
         question: `question ${i}`,
         answer: `answer ${i}`,
@@ -17,11 +19,6 @@ for (let i = 0; i < 10; i++) {
 interface InternalPlayer extends Player {
     key: string;
 }
-
-type TapResult = {
-    stopping?: boolean;
-    players?: Player[];
-};
 
 // Convert InternalPlayer to Player
 function removePlayerKey(player: InternalPlayer): Player {
@@ -55,6 +52,7 @@ export function joinPlayer(
         score: 0,
         correct: 0,
         incorrect: 0,
+        tappedAt: null,
         isOnline: true,
         state: 'ACTIVE',
     };
@@ -70,6 +68,11 @@ function getPlayerById(id: string) {
 // Get all players
 export function getPlayersAll() {
     return players.map((p) => removePlayerKey(p));
+}
+
+// Set start time
+export function setTime() {
+    startTime = Temporal.Now.instant();
 }
 
 // Change score
@@ -88,24 +91,45 @@ export function mark(id: string, result: boolean) {
             player.score += correctScore;
         } else {
             player.score += incorrectScore;
-            // player.state = 'REST'; [TODO] Apply rest state
+            player.state = 'REST';
         }
     }
 }
 
-// Process when button is tapped
-export function tapped(id: string, time: number): TapResult {
-    const player = getPlayerById(id);
-    if (player) {
-        player.tappedAt = time;
+type TapResult = {
+    players?: Player[];
+};
 
+// Process when button is tapped
+export function tapped(id: string): TapResult {
+    const player = getPlayerById(id);
+    if (player && !player.tappedAt && player.state === 'ACTIVE') {
+        const time = Temporal.Now.instant();
+        player.tappedAt = startTime?.until(time) ?? null;
         return {
-            // [TODO] Condition for stopping reading
-            stopping: true,
             players: players.map((p) => removePlayerKey(p)),
         };
     }
     return {};
+}
+
+// Get the next answerer
+export function getAnswererId(): string | null {
+    if (!players.some((p) => p.state === 'ACTIVE' && p.tappedAt)) {
+        return null;
+    }
+    return players.reduce((min, item) => {
+        if (item.state === 'ACTIVE' && min.tappedAt && item.tappedAt) {
+            return min.tappedAt < item.tappedAt ? min : item;
+        } else {
+            return min;
+        }
+    }).id;
+}
+
+// Reset tap state
+export function resetTapped() {
+    players.forEach((p) => (p.tappedAt = null));
 }
 
 // Change current index
@@ -113,10 +137,20 @@ export function moveQuiz(delta: number) {
     quizIndex += delta;
 }
 
+type QuizResult = {
+    index: number;
+    question?: string;
+    answer?: string;
+};
+
 // Get a quiz of current index
-export function getQuiz() {
-    return {
-        index: quizIndex,
-        ...quizzes[quizIndex],
-    };
+export function getQuiz(): QuizResult {
+    return quizIndex > 0
+        ? {
+              index: quizIndex,
+              ...quizzes[quizIndex - 1],
+          }
+        : {
+              index: 0,
+          };
 }

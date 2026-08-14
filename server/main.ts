@@ -97,7 +97,7 @@ Deno.serve((request: Request) => {
                 socket.onopen = () => {
                     const result = tryRegisterViewSocket(socket);
                     if (result) {
-                        console.log('[Log] A View connected');
+                        console.log('[Log] A view connected');
                         const quiz = getQuiz();
                         sendToView({
                             type: 'S2C_VIEW_UPDATE',
