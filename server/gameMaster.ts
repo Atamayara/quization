@@ -1,19 +1,23 @@
 import { Player } from '../shared/types.ts';
 
 const players: InternalPlayer[] = [];
-const quizzes: { question: string; answer: string }[] = [];
+let quizzes: { question: string; answer: string }[] = [];
 let quizIndex: number = 0;
 const correctScore: number = 10;
 const incorrectScore: number = -10;
 
 let startTime: Temporal.Instant | null = null;
 
-// [TEMP] Sample quiz
-for (let i = 1; i < 10; i++) {
-    quizzes.push({
-        question: `question ${i}`,
-        answer: `answer ${i}`,
-    });
+export function loadQuiz() {
+    Deno.readTextFile('./quiz.tsv')
+        .then((text) => {
+            const lines = text.split('\n');
+            quizzes = lines.map((l) => {
+                const [question, answer] = l.split('\t');
+                return { question, answer };
+            });
+        })
+        .catch(() => console.error(`[Error] Quiz file reading failed`));
 }
 
 interface InternalPlayer extends Player {
@@ -154,6 +158,12 @@ export function resetTapped() {
 // Change current index
 export function moveQuiz(delta: number) {
     quizIndex += delta;
+    if (quizIndex > quizzes.length) {
+        quizIndex = quizzes.length;
+    }
+    if (quizIndex < 0) {
+        quizIndex = 0;
+    }
     resetTapped();
 }
 
@@ -165,12 +175,8 @@ type QuizResult = {
 
 // Get a quiz of current index
 export function getQuiz(): QuizResult {
-    return quizIndex > 0
-        ? {
-              index: quizIndex,
-              ...quizzes[quizIndex - 1],
-          }
-        : {
-              index: 0,
-          };
+    return {
+        index: quizIndex,
+        ...quizzes[quizIndex - 1],
+    };
 }
