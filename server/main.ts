@@ -4,12 +4,13 @@ import {
     deleteHostSocket,
     deleteSocket,
     deleteViewSocket,
+    getIdBySocket,
     sendToHost,
     sendToView,
     tryRegisterHostSocket,
     tryRegisterViewSocket,
 } from './connectionManager.ts';
-import { getPlayersAll, getQuiz } from './gameMaster.ts';
+import { getPlayersAll, getQuiz, setIsOnline } from './gameMaster.ts';
 import { hostMessageHandler, playerMessageHandler } from './messageHandler.ts';
 
 Deno.serve((request: Request) => {
@@ -42,6 +43,10 @@ Deno.serve((request: Request) => {
 
             socket.onclose = () => {
                 console.log('[Log] A players disconnected');
+                const id = getIdBySocket(socket);
+                if (id) {
+                    setIsOnline(id, false);
+                }
                 deleteSocket(socket);
             };
 

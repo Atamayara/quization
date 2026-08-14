@@ -40,6 +40,7 @@ export function joinPlayer(
             if (name) {
                 player.name = name;
             }
+            player.isOnline = true;
             return player;
         }
     }
@@ -89,10 +90,20 @@ export function mark(id: string, result: boolean) {
     if (player) {
         if (result) {
             player.score += correctScore;
+            player.correct++;
         } else {
             player.score += incorrectScore;
             player.state = 'REST';
+            player.incorrect++;
         }
+    }
+}
+
+// Set connection state
+export function setIsOnline(id: string, isOnline: boolean) {
+    const player = getPlayerById(id);
+    if (player) {
+        player.isOnline = isOnline;
     }
 }
 
@@ -129,7 +140,10 @@ export function getAnswererId(): string | null {
 
 // Reset tap state
 export function resetTapped() {
-    players.forEach((p) => (p.tappedAt = null));
+    players.forEach((p) => {
+        p.state = 'ACTIVE';
+        p.tappedAt = null;
+    });
 }
 
 // Change current index
