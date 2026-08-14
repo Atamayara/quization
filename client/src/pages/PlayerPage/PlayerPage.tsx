@@ -32,11 +32,18 @@ function PlayerPage() {
                 ) : (
                     // Connecting menu (Connected but not joined)
                     <>
-                        <input ref={nameInputRef} placeholder="name" />
-                        <button onClick={joinButton}>Connect</button>
+                        <input
+                            className={styles.input}
+                            ref={nameInputRef}
+                            placeholder="name"
+                            autoFocus
+                        />
+                        <button className={styles.join} onClick={joinButton}>
+                            Connect
+                        </button>
                     </>
                 )
-            ) : isJoined ? ( // [TODO] Error processing
+            ) : isJoined ? (
                 // Reload required (Not connected but joined)
                 <>
                     <p>Please reload to rejoin</p>

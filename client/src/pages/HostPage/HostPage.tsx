@@ -52,7 +52,6 @@ function HostPage() {
                     </div>
                 </>
             ) : (
-                // [TODO] Error processing
                 <p>Connection error</p>
             )}
         </div>

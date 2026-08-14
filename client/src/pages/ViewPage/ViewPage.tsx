@@ -132,7 +132,6 @@ function ViewPage() {
                     </div>
                 </>
             ) : (
-                // [TODO] Error processing
                 <p>Connection error</p>
             )}
         </div>
