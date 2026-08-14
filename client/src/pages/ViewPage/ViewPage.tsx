@@ -4,9 +4,10 @@ import QuestionText, {
     type QuestionTextHandle,
 } from '../../components/QuestionText';
 import AnswerText, { type AnswerTextHandle } from '../../components/AnswerText';
+import styles from './ViewPage.module.css';
 
-function HostPage() {
-    const { quiz, isConnected, players } = useViewSocket({
+function ViewPage() {
+    const { quiz, isConnected, players, tapper } = useViewSocket({
         start: start,
         pause: pause,
         stop: stop,
@@ -37,6 +38,7 @@ function HostPage() {
 
     // [TODO] Styling
     const [temp, setTemp] = useState<string>('');
+
     // Mark as correct
     function correct() {
         setTemp(temp + 'o');
@@ -49,41 +51,72 @@ function HostPage() {
 
     return (
         // [TODO] Styling
-        <>
+        <div className={styles.container}>
             {isConnected ? (
                 <>
-                    <p>{quiz.index}</p>
-                    <QuestionText
-                        ref={questionTextHandleRef}
-                        className=""
-                        text={quiz.question ?? ''}
-                        speed={quiz.speed ?? 5}
-                        isReading={isReading}
-                    />
-                    <AnswerText
-                        key={quiz.index}
-                        ref={answerTextHandleRef}
-                        className=""
-                        answer={quiz.answer ?? ''}
-                    />
-                    <p>{temp}</p>
-                    <div>
-                        {players.map((player, index) => {
-                            return (
-                                <div key={index}>
-                                    <p>{player.name}</p>
-                                    <p>{player.score}</p>
+                    {tapper && (
+                        <div className={styles.tap}>
+                            <div className={styles.window}>
+                                <div className={styles.responder}>
+                                    <div>Responder</div>
                                 </div>
-                            );
-                        })}
+                                <div className={styles.player}>
+                                    <div>
+                                        {
+                                            players.find((p) => p.id === tapper)
+                                                ?.name
+                                        }
+                                    </div>
+                                </div>
+                                <div className={styles.info}>
+                                    <div>Answering...</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {quiz.index && quiz.index > 0 ? (
+                        <div className={styles.quiz}>
+                            <div className={styles.index}>第{quiz.index}問</div>
+                            <QuestionText
+                                ref={questionTextHandleRef}
+                                className={styles.question}
+                                text={quiz.question ?? ''}
+                                speed={quiz.speed ?? 5}
+                                isReading={isReading}
+                            />
+                            <AnswerText
+                                key={quiz.index}
+                                className={styles.answer}
+                                ref={answerTextHandleRef}
+                                answer={quiz.answer ?? ''}
+                            />
+                        </div>
+                    ) : (
+                        <div className={styles.info}>Waiting...</div>
+                    )}
+                    <div className={styles.cards}>
+                        {players
+                            .sort((a, b) => a.score - b.score)
+                            .map((player, index) => {
+                                return (
+                                    <div key={index} className={styles.card}>
+                                        <div className={styles.name}>
+                                            <div>{player.name}</div>
+                                        </div>
+                                        <div className={styles.score}>
+                                            <div>{player.score}</div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                     </div>
                 </>
             ) : (
                 // [TODO] Error processing
                 <p>Connection error</p>
             )}
-        </>
+        </div>
     );
 }
 
-export default HostPage;
+export default ViewPage;

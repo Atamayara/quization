@@ -4,13 +4,40 @@
 /* Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=LINE+Seed+JP&display=swap');
 
-body {
+:root {
+    font-size: 48px;
+}
+
+html {
     margin: 0;
     padding: 0;
     width: 100dvw;
     height: 100dvh;
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+
     background-color: #fff;
     font-family: 'LINE Seed JP', sans-serif;
     font-weight: 400;
     font-style: normal;
+}
+
+#root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+
+    > div {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
 }

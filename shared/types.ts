@@ -2,7 +2,7 @@
 export interface Player {
     name: string;
     id: string;
-    tappedAt?: number;
+    tappedAt: Temporal.Duration | null;
     score: number;
     correct: number;
     incorrect: number;
@@ -94,7 +94,7 @@ export type ServerMessage =
                     action: 'START_READING' | 'STOP_READING' | 'PAUSE_READING';
                 }
               | {
-                    action: 'CORRECT' | 'INCORRECT';
+                    action: 'TAP' | 'CORRECT' | 'INCORRECT';
                     id: string;
                 };
       };
