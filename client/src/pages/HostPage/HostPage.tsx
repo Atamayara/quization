@@ -1,39 +1,52 @@
 import useHostSocket from '../../hook/useHostSocket';
+import styles from './HostPage.module.css';
 
 function HostPage() {
     const { action, quiz, isConnected, players } = useHostSocket();
     return (
         // [TODO] Styling
-        <>
+        <div className={styles.container}>
             {isConnected ? (
                 <>
-                    <p>{quiz.index}</p>
-                    <p>{quiz.question}</p>
-                    <p>{quiz.answer}</p>
-                    <p>{quiz.speed}</p>
-                    <button onClick={action.prev}>⏮️</button>
-                    <button onClick={action.start}>▶️</button>
-                    <button onClick={action.pause}>⏸️</button>
-                    <button onClick={action.stop}>⏹️</button>
-                    <button onClick={action.next}>⏭️</button>
-                    <div>
-                        {players.map((player) => {
+                    <div className={styles.quiz}>
+                        <div>Index: {quiz.index}</div>
+                        <div className={styles.question}>
+                            Q. {quiz.question}
+                        </div>
+                        <div>A. {quiz.answer}</div>
+                        <div>Speed: {quiz.speed}</div>
+                        <div className={styles.control}>
+                            <button onClick={action.prev}>⏮️</button>
+                            <button onClick={action.start}>▶️</button>
+                            <button onClick={action.pause}>⏸️</button>
+                            <button onClick={action.stop}>⏹️</button>
+                            <button onClick={action.next}>⏭️</button>
+                        </div>
+                    </div>
+
+                    <div className={styles.players}>
+                        {players.map((player, index) => {
                             return (
-                                <div>
-                                    <p>{player.name}</p>
-                                    <p>{player.score}</p>
-                                    <button
-                                        onClick={() =>
-                                            action.mark(player.id, true)
-                                        }>
-                                        o
-                                    </button>
-                                    <button
-                                        onClick={() =>
-                                            action.mark(player.id, false)
-                                        }>
-                                        x
-                                    </button>
+                                <div key={index}>
+                                    <div className={styles.name}>
+                                        {player.name}
+                                    </div>
+                                    <div>{player.score}</div>
+                                    <div>{player.state}</div>
+                                    <div className={styles.buttons}>
+                                        <button
+                                            onClick={() =>
+                                                action.mark(player.id, true)
+                                            }>
+                                            ⭕️
+                                        </button>
+                                        <button
+                                            onClick={() =>
+                                                action.mark(player.id, false)
+                                            }>
+                                            ✖️
+                                        </button>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -43,7 +56,7 @@ function HostPage() {
                 // [TODO] Error processing
                 <p>Connection error</p>
             )}
-        </>
+        </div>
     );
 }
 
