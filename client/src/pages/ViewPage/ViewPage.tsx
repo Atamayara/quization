@@ -46,7 +46,7 @@ function ViewPage() {
 
     // Mark as incorrect
     function incorrect() {
-        setCorrectDisplayed(true);
+        setIncorrectDisplayed(true);
     }
 
     return (

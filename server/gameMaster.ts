@@ -149,6 +149,7 @@ export function resetTapped() {
 // Change current index
 export function moveQuiz(delta: number) {
     quizIndex += delta;
+    resetTapped();
 }
 
 type QuizResult = {
