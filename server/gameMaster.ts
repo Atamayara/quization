@@ -76,6 +76,11 @@ export function setTime() {
     startTime = Temporal.Now.instant();
 }
 
+// Reset start time
+export function resetTime() {
+    startTime = null;
+}
+
 // Change score
 export function changeScore(id: string, score: number) {
     const player = getPlayerById(id);

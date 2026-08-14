@@ -13,7 +13,7 @@ function useHostSocket() {
     const [answer, setAnswer] = useState<string | null>(null);
     const [question, setQuestion] = useState<string | null>(null);
     const [speed, setSpeed] = useState<number>();
-    const [players, setPlayer] = useState<Player[]>([]);
+    const [players, setPlayers] = useState<Player[]>([]);
 
     // Process message from the server
     function ProcessMessage(message: ServerMessage) {
@@ -32,7 +32,7 @@ function useHostSocket() {
                     setSpeed(message.payload.speed);
                 }
                 if (message.payload.players) {
-                    setPlayer(message.payload.players);
+                    setPlayers(message.payload.players);
                 }
                 break;
             }

@@ -32,7 +32,9 @@ function HostPage() {
                                         {player.name}
                                     </div>
                                     <div>{player.score}</div>
-                                    <div>{player.state}</div>
+                                    <div>
+                                        {player.state /* [TODO] Tapped time */}
+                                    </div>
                                     <div className={styles.buttons}>
                                         <button
                                             onClick={() =>
