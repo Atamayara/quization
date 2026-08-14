@@ -13,7 +13,7 @@ function useHostSocket() {
     const [answer, setAnswer] = useState<string | null>(null);
     const [question, setQuestion] = useState<string | null>(null);
     const [speed, setSpeed] = useState<number>();
-    const [players, setPlayer] = useState<Player[]>([]);
+    const [players, setPlayers] = useState<Player[]>([]);
 
     // Process message from the server
     function ProcessMessage(message: ServerMessage) {
@@ -32,7 +32,7 @@ function useHostSocket() {
                     setSpeed(message.payload.speed);
                 }
                 if (message.payload.players) {
-                    setPlayer(message.payload.players);
+                    setPlayers(message.payload.players);
                 }
                 break;
             }
@@ -100,6 +100,16 @@ function useHostSocket() {
         });
     }
 
+    // Reset tap state
+    function reset() {
+        sendMessage({
+            type: 'C2S_HOST_GLOBAL_ACTION',
+            payload: {
+                action: 'RESET_TAP_STATE',
+            },
+        });
+    }
+
     return {
         action: {
             mark,
@@ -108,6 +118,7 @@ function useHostSocket() {
             stop,
             next,
             prev,
+            reset,
         },
         quiz: {
             index,

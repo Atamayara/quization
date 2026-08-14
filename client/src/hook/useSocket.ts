@@ -51,6 +51,7 @@ export function useSocket(args: useWebSocketArgs) {
             if (onDisconnectRef.current) {
                 onDisconnectRef.current();
             }
+            setIsConnected(false);
         };
 
         return () => {

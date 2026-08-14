@@ -2,7 +2,7 @@
 export interface Player {
     name: string;
     id: string;
-    tappedAt?: number;
+    tappedAt: Temporal.Duration | null;
     score: number;
     correct: number;
     incorrect: number;
@@ -37,7 +37,8 @@ export type ClientMessage =
                   | 'PAUSE_READING'
                   | 'STOP_READING'
                   | 'NEXT_QUESTION'
-                  | 'BEFORE_QUESTION';
+                  | 'BEFORE_QUESTION'
+                  | 'RESET_TAP_STATE';
           };
       }
 
@@ -91,10 +92,14 @@ export type ServerMessage =
           type: 'S2C_VIEW_ACTION';
           payload:
               | {
-                    action: 'START_READING' | 'STOP_READING' | 'PAUSE_READING';
+                    action:
+                        | 'START_READING'
+                        | 'STOP_READING'
+                        | 'PAUSE_READING'
+                        | 'RESET_TAP_STATE';
                 }
               | {
-                    action: 'CORRECT' | 'INCORRECT';
+                    action: 'TAP' | 'CORRECT' | 'INCORRECT';
                     id: string;
                 };
       };

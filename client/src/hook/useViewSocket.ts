@@ -10,7 +10,7 @@ type useHostSocketArgs = {
     incorrect: (id: string) => void;
 };
 
-// provide features of WebSocket for the host client
+// Provide features of WebSocket for the host client
 function useHostSocket(args: useHostSocketArgs) {
     const { isConnected } = useSocket({
         onMessage: ProcessMessage,
@@ -22,24 +22,25 @@ function useHostSocket(args: useHostSocketArgs) {
     const [question, setQuestion] = useState<string | null>(null);
     const [speed, setSpeed] = useState<number>();
     const [players, setPlayer] = useState<Player[]>([]);
+    const [tapper, setTapper] = useState<string | null>(null);
 
     // Process message from the server
     function ProcessMessage(message: ServerMessage) {
         switch (message?.type) {
             case 'S2C_VIEW_UPDATE': {
-                if (message.payload.index) {
+                if (message.payload.index !== undefined) {
                     setIndex(message.payload.index);
                 }
-                if (message.payload.question) {
+                if (message.payload.question !== undefined) {
                     setQuestion(message.payload.question);
                 }
-                if (message.payload.answer) {
+                if (message.payload.answer !== undefined) {
                     setAnswer(message.payload.answer);
                 }
-                if (message.payload.speed) {
+                if (message.payload.speed !== undefined) {
                     setSpeed(message.payload.speed);
                 }
-                if (message.payload.players) {
+                if (message.payload.players !== undefined) {
                     setPlayer(message.payload.players);
                 }
                 break;
@@ -62,13 +63,25 @@ function useHostSocket(args: useHostSocketArgs) {
                         break;
                     }
 
+                    case 'TAP': {
+                        setTapper(message.payload.id);
+                        break;
+                    }
+
                     case 'CORRECT': {
+                        setTapper(null);
                         args.correct(message.payload.id);
                         break;
                     }
 
                     case 'INCORRECT': {
+                        setTapper(null);
                         args.incorrect(message.payload.id);
+                        break;
+                    }
+
+                    case 'RESET_TAP_STATE': {
+                        setTapper(null);
                         break;
                     }
                 }
@@ -85,6 +98,7 @@ function useHostSocket(args: useHostSocketArgs) {
             speed,
         },
         isConnected,
+        tapper,
         players,
     };
 }

@@ -1,20 +1,30 @@
+import { serveDir, serveFile } from '@std/http/file-server';
 import { ClientMessage } from '../shared/types.ts';
 import {
     deleteHostSocket,
+    deleteSocket,
     deleteViewSocket,
+    getIdBySocket,
     sendToHost,
     sendToView,
     tryRegisterHostSocket,
     tryRegisterViewSocket,
 } from './connectionManager.ts';
-import { getPlayersAll, getQuiz } from './gameMaster.ts';
+import { getPlayersAll, getQuiz, setIsOnline } from './gameMaster.ts';
 import { hostMessageHandler, playerMessageHandler } from './messageHandler.ts';
 
-export function handler(request: Request): Response {
+Deno.serve((request: Request) => {
     // Access to pages
     const url = new URL(request.url);
     if (request.headers.get('upgrade') !== 'websocket') {
-        return new Response('');
+        const hasExtension = url.pathname.includes('.');
+        if (!hasExtension) {
+            return serveFile(request, './public/index.html');
+        }
+        return serveDir(request, {
+            fsRoot: './public',
+            quiet: true,
+        });
     }
 
     // WebSocket connection
@@ -33,6 +43,11 @@ export function handler(request: Request): Response {
 
             socket.onclose = () => {
                 console.log('[Log] A players disconnected');
+                const id = getIdBySocket(socket);
+                if (id) {
+                    setIsOnline(id, false);
+                }
+                deleteSocket(socket);
             };
 
             socket.onerror = (error) => console.error('[Error] ', error);
@@ -87,7 +102,7 @@ export function handler(request: Request): Response {
                 socket.onopen = () => {
                     const result = tryRegisterViewSocket(socket);
                     if (result) {
-                        console.log('[Log] A View connected');
+                        console.log('[Log] A view connected');
                         const quiz = getQuiz();
                         sendToView({
                             type: 'S2C_VIEW_UPDATE',
@@ -118,8 +133,4 @@ export function handler(request: Request): Response {
     }
 
     return response;
-}
-
-if (import.meta.main) {
-    Deno.serve(handler);
-}
+});

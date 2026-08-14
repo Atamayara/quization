@@ -14,6 +14,9 @@ import {
     tapped,
     mark,
     changeScore,
+    getAnswererId,
+    setTime,
+    resetTapped,
 } from './gameMaster.ts';
 
 // Process messages from players
@@ -30,19 +33,25 @@ export function playerMessageHandler(
                 message.payload.key,
             );
             registerSocket(result.id, socket);
-            sendToPlayer({
-                type: 'S2C_JOIN_ACK',
-                payload: {
-                    id: result.id,
-                    key: result.key,
+            sendToPlayer(
+                {
+                    type: 'S2C_JOIN_ACK',
+                    payload: {
+                        id: result.id,
+                        key: result.key,
+                    },
                 },
-            });
-            sendToPlayer({
-                type: 'S2C_SET_UI_STATE',
-                payload: {
-                    player: result,
+                result.id,
+            );
+            sendToPlayer(
+                {
+                    type: 'S2C_SET_UI_STATE',
+                    payload: {
+                        player: result,
+                    },
                 },
-            });
+                result.id,
+            );
             sendToHostAndView({
                 type: 'S2C_VIEW_UPDATE',
                 payload: {
@@ -54,14 +63,18 @@ export function playerMessageHandler(
 
         // Tap to answer
         case 'C2S_TAP': {
-            const time = 0; // [TODO] Timing
             const id = getIdBySocket(socket);
             if (id) {
-                const result = tapped(id, time);
-                if (result.stopping) {
+                const result = tapped(id);
+                const answererId = getAnswererId();
+                if (answererId) {
                     sendToView({
                         type: 'S2C_VIEW_ACTION',
                         payload: { action: 'PAUSE_READING' },
+                    });
+                    sendToView({
+                        type: 'S2C_VIEW_ACTION',
+                        payload: { action: 'TAP', id: answererId },
                     });
                 }
                 if (result.players) {
@@ -96,7 +109,16 @@ export function hostMessageHandler(message: ClientMessage) {
         // Global actions by the host
         case 'C2S_HOST_GLOBAL_ACTION': {
             switch (message.payload.action) {
-                case 'START_READING':
+                case 'START_READING': {
+                    sendToView({
+                        type: 'S2C_VIEW_ACTION',
+                        payload: {
+                            action: 'START_READING',
+                        },
+                    });
+                    setTime();
+                    break;
+                }
                 case 'STOP_READING':
                 case 'PAUSE_READING': {
                     sendToView({
@@ -109,14 +131,33 @@ export function hostMessageHandler(message: ClientMessage) {
                 }
 
                 case 'NEXT_QUESTION': {
+                    setTime();
                     moveQuiz(1);
                     sendQuiz();
                     break;
                 }
 
                 case 'BEFORE_QUESTION': {
+                    setTime();
                     moveQuiz(-1);
                     sendQuiz();
+                    break;
+                }
+
+                case 'RESET_TAP_STATE': {
+                    resetTapped();
+                    sendToHostAndView({
+                        type: 'S2C_VIEW_UPDATE',
+                        payload: {
+                            players: getPlayersAll(),
+                        },
+                    });
+                    sendToView({
+                        type: 'S2C_VIEW_ACTION',
+                        payload: {
+                            action: 'RESET_TAP_STATE',
+                        },
+                    });
                     break;
                 }
             }
@@ -129,10 +170,31 @@ export function hostMessageHandler(message: ClientMessage) {
             switch (message.payload.action) {
                 case 'MARK_CORRECT': {
                     mark(id, true);
+                    sendToView({
+                        type: 'S2C_VIEW_ACTION',
+                        payload: {
+                            action: 'CORRECT',
+                            id: id,
+                        },
+                    });
                     break;
                 }
                 case 'MARK_INCORRECT': {
                     mark(id, false);
+                    const answererId = getAnswererId();
+                    sendToView({
+                        type: 'S2C_VIEW_ACTION',
+                        payload: {
+                            action: 'INCORRECT',
+                            id: id,
+                        },
+                    });
+                    if (answererId) {
+                        sendToView({
+                            type: 'S2C_VIEW_ACTION',
+                            payload: { action: 'TAP', id: id },
+                        });
+                    }
                     break;
                 }
                 case 'ADJUST_SCORE': {
@@ -178,6 +240,7 @@ function sendQuiz() {
             index: quiz.index,
             question: quiz.question,
             answer: quiz.answer,
+            players: getPlayersAll(),
         },
     });
 }
