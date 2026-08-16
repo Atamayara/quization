@@ -8,6 +8,7 @@ type useHostSocketArgs = {
     stop: () => void;
     correct: (id: string) => void;
     incorrect: (id: string) => void;
+    tap: () => void;
 };
 
 // Provide features of WebSocket for the host client
@@ -64,6 +65,7 @@ function useHostSocket(args: useHostSocketArgs) {
                     }
 
                     case 'TAP': {
+                        args.tap();
                         setTapper(message.payload.id);
                         break;
                     }
