@@ -5,6 +5,7 @@ import QuestionText, {
 } from '../../components/QuestionText';
 import AnswerText, { type AnswerTextHandle } from '../../components/AnswerText';
 import styles from './ViewPage.module.css';
+import useSoundEffects from '../../hook/useSoundEffects';
 
 function ViewPage() {
     const { quiz, isConnected, players, tapper } = useViewSocket({
@@ -13,28 +14,46 @@ function ViewPage() {
         stop: stop,
         correct: correct,
         incorrect: incorrect,
+        tap: tap,
     });
+
+    const playSEs = useSoundEffects();
 
     const questionTextHandleRef = useRef<QuestionTextHandle | null>(null);
     const answerTextHandleRef = useRef<AnswerTextHandle | null>(null);
+    const readingWaitRef = useRef<number | null>(null);
 
     const [isReading, setIsReading] = useState<boolean>(false);
     const [correctDisplayed, setCorrectDisplayed] = useState<boolean>(false);
     const [incorrectDisplayed, setIncorrectDisplayed] =
         useState<boolean>(false);
+    const [soundState, setSoundState] = useState<boolean>(false);
 
     // Start reading
     function start() {
-        setIsReading(true);
+        if (soundState) {
+            playSEs('quiz');
+        }
+        readingWaitRef.current = setTimeout(() => {
+            setIsReading(true);
+        }, 1000);
     }
 
     // Pause reading
     function pause() {
+        if (readingWaitRef.current) {
+            clearTimeout(readingWaitRef.current);
+            readingWaitRef.current = null;
+        }
         setIsReading(false);
     }
 
     // Stop reading
     function stop() {
+        if (readingWaitRef.current) {
+            clearTimeout(readingWaitRef.current);
+            readingWaitRef.current = null;
+        }
         questionTextHandleRef.current?.showAll();
         answerTextHandleRef.current?.show();
     }
@@ -42,15 +61,40 @@ function ViewPage() {
     // Mark as correct
     function correct() {
         setCorrectDisplayed(true);
+        if (soundState) {
+            playSEs('correct');
+        }
     }
 
     // Mark as incorrect
     function incorrect() {
         setIncorrectDisplayed(true);
+        if (soundState) {
+            playSEs('incorrect');
+        }
+    }
+
+    // Tap
+    function tap() {
+        if (soundState && tapper === null) {
+            playSEs('tap');
+        }
+    }
+
+    // Toggle playback availability
+    function ToggleSound() {
+        if (!soundState) {
+            playSEs('tap');
+        }
+        setSoundState(!soundState);
     }
 
     return (
         <div className={styles.container}>
+            {/* <audio src="./sound/correct.mp3" />
+            <audio src="./sound/incorrect.mp3" />
+            <audio src="./sound/quiz.mp3" />
+            <audio src="./sound/tap.mp3" /> */}
             {isConnected ? (
                 <>
                     <div className={styles.figure}>
@@ -112,7 +156,12 @@ function ViewPage() {
                             />
                         </div>
                     ) : (
-                        <div className={styles.info}>Waiting...</div>
+                        <div className={styles.info}>
+                            Waiting...{' '}
+                            <button onClick={() => ToggleSound()}>
+                                {soundState ? '🔊' : '🔇'}
+                            </button>
+                        </div>
                     )}
                     <div className={styles.cards}>
                         {players

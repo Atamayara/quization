@@ -3,6 +3,7 @@ import styles from './HostPage.module.css';
 
 function HostPage() {
     const { action, quiz, isConnected, players } = useHostSocket();
+
     return (
         <div className={styles.container}>
             {isConnected ? (
@@ -21,6 +22,9 @@ function HostPage() {
                             <button onClick={action.stop}>⏹️</button>
                             <button onClick={action.next}>⏭️</button>
                             <button onClick={action.reset}>🔄</button>
+                        </div>
+                        <div>
+                            Sound: <a href="https://otologic.jp/">OtoLogic</a>
                         </div>
                     </div>
 

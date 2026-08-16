@@ -181,7 +181,6 @@ export function hostMessageHandler(message: ClientMessage) {
                 }
                 case 'MARK_INCORRECT': {
                     mark(id, false);
-                    const answererId = getAnswererId();
                     sendToView({
                         type: 'S2C_VIEW_ACTION',
                         payload: {
@@ -189,10 +188,11 @@ export function hostMessageHandler(message: ClientMessage) {
                             id: id,
                         },
                     });
+                    const answererId = getAnswererId();
                     if (answererId) {
                         sendToView({
                             type: 'S2C_VIEW_ACTION',
-                            payload: { action: 'TAP', id: id },
+                            payload: { action: 'TAP', id: answererId },
                         });
                     }
                     break;

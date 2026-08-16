@@ -48,7 +48,6 @@ export function joinPlayer(
             return player;
         }
     }
-    console.log();
     // Create player data
     const player: InternalPlayer = {
         key: crypto.randomUUID(),
@@ -135,16 +134,20 @@ export function tapped(id: string): TapResult {
 
 // Get the next answerer
 export function getAnswererId(): string | null {
-    if (!players.some((p) => p.state === 'ACTIVE' && p.tappedAt)) {
-        return null;
-    }
-    return players.reduce((min, item) => {
-        if (item.state === 'ACTIVE' && min.tappedAt && item.tappedAt) {
-            return min.tappedAt < item.tappedAt ? min : item;
-        } else {
-            return min;
+    const result = players.reduce((min, item) => {
+        if (
+            item.state === 'ACTIVE' &&
+            item.tappedAt &&
+            (min.state !== 'ACTIVE' ||
+                !min.tappedAt ||
+                Temporal.Duration.compare(min.tappedAt, item.tappedAt) > 0)
+        ) {
+            return item;
         }
-    }).id;
+        return min;
+    });
+    console.log(result);
+    return result.state === 'ACTIVE' && result.tappedAt ? result.id : null;
 }
 
 // Reset tap state
