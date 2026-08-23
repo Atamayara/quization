@@ -91,10 +91,6 @@ function ViewPage() {
 
     return (
         <div className={styles.container}>
-            {/* <audio src="./sound/correct.mp3" />
-            <audio src="./sound/incorrect.mp3" />
-            <audio src="./sound/quiz.mp3" />
-            <audio src="./sound/tap.mp3" /> */}
             {isConnected ? (
                 <>
                     <div className={styles.figure}>
