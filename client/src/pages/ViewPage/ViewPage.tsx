@@ -96,7 +96,7 @@ function ViewPage() {
                     <div className={styles.figure}>
                         {correctDisplayed && (
                             <div
-                                key={quiz.index}
+                                key={`f_o_${quiz.index}`}
                                 className={styles.circle}
                                 onAnimationEnd={() =>
                                     setCorrectDisplayed(false)
@@ -104,7 +104,7 @@ function ViewPage() {
                         )}
                         {incorrectDisplayed && (
                             <div
-                                key={quiz.index}
+                                key={`f_x_${quiz.index}`}
                                 className={styles.cross}
                                 onAnimationEnd={() =>
                                     setIncorrectDisplayed(false)
@@ -145,7 +145,7 @@ function ViewPage() {
                                 isReading={isReading}
                             />
                             <AnswerText
-                                key={quiz.index}
+                                key={`ans_${quiz.index}`}
                                 className={styles.answer}
                                 ref={answerTextHandleRef}
                                 answer={quiz.answer ?? ''}
@@ -166,7 +166,7 @@ function ViewPage() {
                                 .map((player, index) => {
                                     return (
                                         <div
-                                            key={index}
+                                            key={`p_${index}`}
                                             className={styles.card}
                                             data-state={player.state}
                                             data-online={
