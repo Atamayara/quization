@@ -2,7 +2,7 @@
 export interface Player {
     name: string;
     id: string;
-    tappedAt: Temporal.Duration | null;
+    tappedAt: number | null;
     score: number;
     correct: number;
     incorrect: number;

@@ -76,10 +76,14 @@ function HostPage() {
                                     <div>{player.score}</div>
                                     <div>
                                         {!player.isOnline
-                                            ? 'OFFLINE' /* [TODO] Tapped time */
+                                            ? 'OFFLINE'
                                             : player.state === 'REST'
                                               ? `REST ${player.restCount}`
-                                              : player.state}
+                                              : player.tappedAt !== null
+                                                ? (
+                                                      player.tappedAt / 1000
+                                                  ).toFixed(2)
+                                                : player.state}
                                     </div>
                                     <div>
                                         {player.correct}⭕️ {player.incorrect}✖️

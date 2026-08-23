@@ -27,14 +27,17 @@ export function loadQuiz() {
 }
 
 interface InternalPlayer extends Player {
+    tappedAt: null;
+    tappedAtObj: Temporal.Duration | null;
     key: string;
 }
 
 // Convert InternalPlayer to Player
 function removePlayerKey(player: InternalPlayer): Player {
     // deno-lint-ignore no-unused-vars
-    const { key, ...result } = player;
-    return result;
+    const { key, tappedAtObj: tappedAtObject, ...result } = player;
+    const time = tappedAtObject?.total({ unit: 'millisecond' });
+    return { ...result, tappedAt: time ? time : null };
 }
 
 // Process when a player join
@@ -66,6 +69,7 @@ export function joinPlayer(
         isOnline: true,
         restCount: 0,
         state: 'ACTIVE',
+        tappedAtObj: null,
     };
     players.push(player);
     return player;
@@ -132,12 +136,13 @@ export function tapped(id: string): TapResult {
     const player = getPlayerById(id);
     if (
         startTime !== null &&
+        player?.tappedAtObj === null &&
         player &&
         !player.tappedAt &&
         player.state === 'ACTIVE'
     ) {
         const time = Temporal.Now.instant();
-        player.tappedAt = startTime?.until(time) ?? null;
+        player.tappedAtObj = startTime?.until(time) ?? null;
         return {
             players: players.map((p) => removePlayerKey(p)),
         };
@@ -150,10 +155,11 @@ export function getAnswererId(): string | null {
     const result = players.reduce((min, item) => {
         if (
             item.state === 'ACTIVE' &&
-            item.tappedAt &&
+            item.tappedAtObj &&
             (min.state !== 'ACTIVE' ||
-                !min.tappedAt ||
-                Temporal.Duration.compare(min.tappedAt, item.tappedAt) > 0)
+                !min.tappedAtObj ||
+                Temporal.Duration.compare(min.tappedAtObj, item.tappedAtObj) >
+                    0)
         ) {
             return item;
         }
