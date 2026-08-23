@@ -5,7 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=LINE+Seed+JP&display=swap');
 
 :root {
-    font-size: 32px;
+    font-size: clamp(48px, 3vw, 64px);
 }
 
 html {
