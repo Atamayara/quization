@@ -8,6 +8,7 @@ export interface Player {
     incorrect: number;
     // life: number; [TODO] Enable lives
     isOnline: boolean;
+    restCount: number;
     state: 'ACTIVE' | 'REST';
 }
 

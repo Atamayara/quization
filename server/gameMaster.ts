@@ -6,6 +6,7 @@ let quizIndex: number = 0;
 const correctScore: number = 10;
 const incorrectScore: number = -10;
 let speed: number = 10;
+const restPenalty: number = 1;
 
 let startTime: Temporal.Instant | null = null;
 
@@ -59,6 +60,7 @@ export function joinPlayer(
         incorrect: 0,
         tappedAt: null,
         isOnline: true,
+        restCount: 0,
         state: 'ACTIVE',
     };
     players.push(player);
@@ -81,7 +83,7 @@ export function setTime() {
 }
 
 // Reset start time
-export function resetTime() {
+function resetTime() {
     startTime = null;
 }
 
@@ -103,6 +105,7 @@ export function mark(id: string, result: boolean) {
         } else {
             player.score += incorrectScore;
             player.state = 'REST';
+            player.restCount = restPenalty;
             player.incorrect++;
         }
     }
@@ -123,7 +126,12 @@ type TapResult = {
 // Process when button is tapped
 export function tapped(id: string): TapResult {
     const player = getPlayerById(id);
-    if (player && !player.tappedAt && player.state === 'ACTIVE') {
+    if (
+        startTime !== null &&
+        player &&
+        !player.tappedAt &&
+        player.state === 'ACTIVE'
+    ) {
         const time = Temporal.Now.instant();
         player.tappedAt = startTime?.until(time) ?? null;
         return {
@@ -153,13 +161,18 @@ export function getAnswererId(): string | null {
 // Reset tap state
 export function resetTapped() {
     players.forEach((p) => {
-        p.state = 'ACTIVE';
+        if (p.restCount > 0) {
+            p.restCount -= 1;
+        } else {
+            p.state = 'ACTIVE';
+        }
         p.tappedAt = null;
     });
 }
 
 // Change current index
 export function moveQuiz(delta: number) {
+    resetTime();
     quizIndex += delta;
     if (quizIndex > quizzes.length) {
         quizIndex = quizzes.length;

@@ -132,14 +132,12 @@ export function hostMessageHandler(message: ClientMessage) {
                 }
 
                 case 'NEXT_QUESTION': {
-                    setTime();
                     moveQuiz(1);
                     sendQuiz();
                     break;
                 }
 
                 case 'BEFORE_QUESTION': {
-                    setTime();
                     moveQuiz(-1);
                     sendQuiz();
                     break;
