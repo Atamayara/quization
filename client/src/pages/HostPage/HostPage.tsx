@@ -27,26 +27,31 @@ function HostPage() {
                             />
                         </div>
                         <div>
-                            Point: ⭕️
-                            <input
-                                type="number"
-                                value={quiz.correct ?? ''}
-                                onChange={(e) =>
-                                    settings.changeCorrectPoint(
-                                        parseFloat(e.currentTarget.value),
-                                    )
-                                }
-                            />
-                            ✖️
-                            <input
-                                type="number"
-                                value={quiz.incorrect ?? ''}
-                                onChange={(e) =>
-                                    settings.changeIncorrectPoint(
-                                        parseFloat(e.currentTarget.value),
-                                    )
-                                }
-                            />
+                            Point:
+                            <div>
+                                ⭕️
+                                <input
+                                    type="number"
+                                    value={quiz.correct ?? ''}
+                                    onChange={(e) =>
+                                        settings.changeCorrectPoint(
+                                            parseFloat(e.currentTarget.value),
+                                        )
+                                    }
+                                />
+                            </div>
+                            <div>
+                                ✖️
+                                <input
+                                    type="number"
+                                    value={quiz.incorrect ?? ''}
+                                    onChange={(e) =>
+                                        settings.changeIncorrectPoint(
+                                            parseFloat(e.currentTarget.value),
+                                        )
+                                    }
+                                />
+                            </div>
                         </div>
                         <div className={styles.control}>
                             <button onClick={actions.prev}>⏮️</button>
