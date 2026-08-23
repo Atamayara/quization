@@ -6,6 +6,7 @@ import {
     deleteViewSocket,
     getIdBySocket,
     sendToHost,
+    sendToHostAndView,
     sendToView,
     tryRegisterHostSocket,
     tryRegisterViewSocket,
@@ -50,6 +51,12 @@ Deno.serve((request: Request) => {
                     setIsOnline(id, false);
                 }
                 deleteSocket(socket);
+                sendToHostAndView({
+                    type: 'S2C_VIEW_UPDATE',
+                    payload: {
+                        players: getPlayersAll(),
+                    },
+                });
             };
 
             socket.onerror = (error) => console.error('[Error] ', error);

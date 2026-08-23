@@ -147,7 +147,6 @@ export function getAnswererId(): string | null {
         }
         return min;
     });
-    console.log(result);
     return result.state === 'ACTIVE' && result.tappedAt ? result.id : null;
 }
 
