@@ -165,7 +165,7 @@ export function getAnswererId(): string | null {
         }
         return min;
     });
-    return result.state === 'ACTIVE' && result.tappedAt ? result.id : null;
+    return result.state === 'ACTIVE' && result.tappedAtObj ? result.id : null;
 }
 
 // Reset tap state
