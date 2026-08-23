@@ -161,9 +161,10 @@ export function getAnswererId(): string | null {
 // Reset tap state
 export function resetTapped() {
     players.forEach((p) => {
-        if (p.restCount > 0) {
+        if (p.restCount > 1) {
             p.restCount -= 1;
         } else {
+            p.restCount = 0;
             p.state = 'ACTIVE';
         }
         p.tappedAt = null;

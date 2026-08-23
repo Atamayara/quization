@@ -48,11 +48,11 @@ function HostPage() {
                                     </div>
                                     <div>{player.score}</div>
                                     <div>
-                                        {
-                                            player.isOnline
-                                                ? player.state
-                                                : 'OFFLINE' /* [TODO] Tapped time */
-                                        }
+                                        {!player.isOnline
+                                            ? 'OFFLINE' /* [TODO] Tapped time */
+                                            : player.state === 'REST'
+                                              ? `REST ${player.restCount}`
+                                              : player.state}
                                     </div>
                                     <div>
                                         {player.correct}⭕️ {player.incorrect}✖️
