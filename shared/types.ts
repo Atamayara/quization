@@ -12,6 +12,13 @@ export interface Player {
     state: 'ACTIVE' | 'REST';
 }
 
+// Quiz settings
+export type QuizSettingsUpdate = {
+    speed?: number;
+    correct?: number;
+    incorrect?: number;
+};
+
 // Message sent to a server from clients
 export type ClientMessage =
     // (Re)Join
@@ -46,9 +53,7 @@ export type ClientMessage =
     // Change settings by the host
     | {
           type: 'C2S_HOST_CHANGE_SETTINGS';
-          payload: {
-              speed?: number;
-          };
+          payload: QuizSettingsUpdate;
       }
 
     // Actions for a player by the host
@@ -93,6 +98,8 @@ export type ServerMessage =
               answer?: string;
               speed?: number; // Char per seconds (-1: immediately)
               players?: Player[];
+              correct?: number;
+              incorrect?: number;
           };
       }
 

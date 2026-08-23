@@ -57,7 +57,7 @@ export function useSocket(args: useWebSocketArgs) {
         return () => {
             socket.close();
         };
-    }, []);
+    }, [args.path]);
 
     // Send message to the server
     function sendMessage(message: ClientMessage) {

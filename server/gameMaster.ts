@@ -1,11 +1,15 @@
-import { Player } from '../shared/types.ts';
+import { Player, QuizSettingsUpdate } from '../shared/types.ts';
 
 const players: InternalPlayer[] = [];
 let quizzes: { question: string; answer: string }[] = [];
 let quizIndex: number = 0;
-const correctScore: number = 10;
-const incorrectScore: number = -10;
-let speed: number = 10;
+
+const settings = {
+    speed: 10,
+    correct: 10,
+    incorrect: -10,
+};
+
 const restPenalty: number = 1;
 
 let startTime: Temporal.Instant | null = null;
@@ -100,10 +104,10 @@ export function mark(id: string, result: boolean) {
     const player = getPlayerById(id);
     if (player) {
         if (result) {
-            player.score += correctScore;
+            player.score += settings.correct;
             player.correct++;
         } else {
-            player.score += incorrectScore;
+            player.score += settings.incorrect;
             player.state = 'REST';
             player.restCount = restPenalty;
             player.incorrect++;
@@ -188,20 +192,30 @@ type QuizResult = {
     index: number;
     question?: string;
     answer?: string;
-    speed?: number;
 };
 
 // Get a quiz of current index
 export function getQuiz(): QuizResult {
     return {
         index: quizIndex,
-        speed: speed,
         ...quizzes[quizIndex - 1],
     };
 }
 
-// Set reading speed
-export function setSpeed(nextSpeed: number): number {
-    speed = nextSpeed >= -1 ? nextSpeed : speed;
-    return speed;
+// Set quiz settings
+export function setSettings(update: QuizSettingsUpdate) {
+    if (update.speed !== undefined && update.speed >= -1) {
+        settings.speed = update.speed;
+    }
+    if (update.correct !== undefined) {
+        settings.correct = update.correct;
+    }
+    if (update.incorrect !== undefined) {
+        settings.incorrect = update.incorrect;
+    }
+}
+
+// Get quiz settings
+export function getSettings() {
+    return settings;
 }

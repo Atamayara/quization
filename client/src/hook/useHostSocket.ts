@@ -13,6 +13,8 @@ function useHostSocket() {
     const [answer, setAnswer] = useState<string | null>(null);
     const [question, setQuestion] = useState<string | null>(null);
     const [speed, setSpeed] = useState<number>();
+    const [correct, setCorrect] = useState<number>();
+    const [incorrect, setIncorrect] = useState<number>();
     const [players, setPlayers] = useState<Player[]>([]);
 
     // Process message from the server
@@ -37,6 +39,12 @@ function useHostSocket() {
                 }
                 if (message.payload.players !== undefined) {
                     setPlayers(message.payload.players);
+                }
+                if (message.payload.correct !== undefined) {
+                    setCorrect(message.payload.correct);
+                }
+                if (message.payload.incorrect !== undefined) {
+                    setIncorrect(message.payload.incorrect);
                 }
                 break;
             }
@@ -124,8 +132,28 @@ function useHostSocket() {
         });
     }
 
+    // Change correct point
+    function changeCorrectPoint(point: number) {
+        sendMessage({
+            type: 'C2S_HOST_CHANGE_SETTINGS',
+            payload: {
+                correct: point,
+            },
+        });
+    }
+
+    // Change incorrect point
+    function changeIncorrectPoint(point: number) {
+        sendMessage({
+            type: 'C2S_HOST_CHANGE_SETTINGS',
+            payload: {
+                incorrect: point,
+            },
+        });
+    }
+
     return {
-        action: {
+        actions: {
             mark,
             start,
             pause,
@@ -133,13 +161,19 @@ function useHostSocket() {
             next,
             prev,
             reset,
+        },
+        settings: {
             changeSpeed,
+            changeCorrectPoint,
+            changeIncorrectPoint,
         },
         quiz: {
             index,
             question,
             answer,
             speed,
+            correct,
+            incorrect,
         },
         isConnected,
         players,
