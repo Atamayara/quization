@@ -141,7 +141,7 @@ function ViewPage() {
                                 ref={questionTextHandleRef}
                                 className={styles.question}
                                 text={quiz.question ?? ''}
-                                speed={quiz.speed ?? 10}
+                                speed={quiz.speed ?? -1}
                                 isReading={isReading}
                             />
                             <AnswerText

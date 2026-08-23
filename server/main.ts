@@ -69,6 +69,7 @@ Deno.serve((request: Request) => {
                                 index: quiz.index,
                                 question: quiz.question,
                                 answer: quiz.answer,
+                                speed: quiz.speed,
                                 players: getPlayersAll(),
                             },
                         });
@@ -112,6 +113,7 @@ Deno.serve((request: Request) => {
                                 index: quiz.index,
                                 question: quiz.question,
                                 answer: quiz.answer,
+                                speed: quiz.speed,
                                 players: getPlayersAll(),
                             },
                         });

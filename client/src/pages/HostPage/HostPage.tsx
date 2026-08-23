@@ -14,7 +14,18 @@ function HostPage() {
                             Q. {quiz.question}
                         </div>
                         <div>A. {quiz.answer}</div>
-                        <div>Speed: {quiz.speed}</div>
+                        <div>
+                            Speed:{' '}
+                            <input
+                                type="number"
+                                value={quiz.speed ?? ''}
+                                onChange={(e) =>
+                                    action.changeSpeed(
+                                        parseFloat(e.currentTarget.value),
+                                    )
+                                }
+                            />
+                        </div>
                         <div className={styles.control}>
                             <button onClick={action.prev}>⏮️</button>
                             <button onClick={action.start}>▶️</button>
@@ -37,7 +48,14 @@ function HostPage() {
                                     </div>
                                     <div>{player.score}</div>
                                     <div>
-                                        {player.state /* [TODO] Tapped time */}
+                                        {
+                                            player.isOnline
+                                                ? player.state
+                                                : 'OFFLINE' /* [TODO] Tapped time */
+                                        }
+                                    </div>
+                                    <div>
+                                        {player.correct}⭕️ {player.incorrect}✖️
                                     </div>
                                     <div className={styles.buttons}>
                                         <button
