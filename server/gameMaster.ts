@@ -1,11 +1,16 @@
-import { Player } from '../shared/types.ts';
+import { Player, QuizSettingsUpdate } from '../shared/types.ts';
 
 const players: InternalPlayer[] = [];
 let quizzes: { question: string; answer: string }[] = [];
 let quizIndex: number = 0;
-const correctScore: number = 10;
-const incorrectScore: number = -10;
-let speed: number = 10;
+
+const settings = {
+    speed: 10,
+    correct: 10,
+    incorrect: -10,
+};
+
+const restPenalty: number = 1;
 
 let startTime: Temporal.Instant | null = null;
 
@@ -22,14 +27,17 @@ export function loadQuiz() {
 }
 
 interface InternalPlayer extends Player {
+    tappedAt: null;
+    tappedAtObj: Temporal.Duration | null;
     key: string;
 }
 
 // Convert InternalPlayer to Player
 function removePlayerKey(player: InternalPlayer): Player {
     // deno-lint-ignore no-unused-vars
-    const { key, ...result } = player;
-    return result;
+    const { key, tappedAtObj: tappedAtObject, ...result } = player;
+    const time = tappedAtObject?.total({ unit: 'millisecond' });
+    return { ...result, tappedAt: time ? time : null };
 }
 
 // Process when a player join
@@ -59,7 +67,9 @@ export function joinPlayer(
         incorrect: 0,
         tappedAt: null,
         isOnline: true,
+        restCount: 0,
         state: 'ACTIVE',
+        tappedAtObj: null,
     };
     players.push(player);
     return player;
@@ -81,7 +91,7 @@ export function setTime() {
 }
 
 // Reset start time
-export function resetTime() {
+function resetTime() {
     startTime = null;
 }
 
@@ -98,11 +108,12 @@ export function mark(id: string, result: boolean) {
     const player = getPlayerById(id);
     if (player) {
         if (result) {
-            player.score += correctScore;
+            player.score += settings.correct;
             player.correct++;
         } else {
-            player.score += incorrectScore;
+            player.score += settings.incorrect;
             player.state = 'REST';
+            player.restCount = restPenalty;
             player.incorrect++;
         }
     }
@@ -123,9 +134,15 @@ type TapResult = {
 // Process when button is tapped
 export function tapped(id: string): TapResult {
     const player = getPlayerById(id);
-    if (player && !player.tappedAt && player.state === 'ACTIVE') {
+    if (
+        startTime !== null &&
+        player?.tappedAtObj === null &&
+        player &&
+        !player.tappedAt &&
+        player.state === 'ACTIVE'
+    ) {
         const time = Temporal.Now.instant();
-        player.tappedAt = startTime?.until(time) ?? null;
+        player.tappedAtObj = startTime?.until(time) ?? null;
         return {
             players: players.map((p) => removePlayerKey(p)),
         };
@@ -138,28 +155,35 @@ export function getAnswererId(): string | null {
     const result = players.reduce((min, item) => {
         if (
             item.state === 'ACTIVE' &&
-            item.tappedAt &&
+            item.tappedAtObj &&
             (min.state !== 'ACTIVE' ||
-                !min.tappedAt ||
-                Temporal.Duration.compare(min.tappedAt, item.tappedAt) > 0)
+                !min.tappedAtObj ||
+                Temporal.Duration.compare(min.tappedAtObj, item.tappedAtObj) >
+                    0)
         ) {
             return item;
         }
         return min;
     });
-    return result.state === 'ACTIVE' && result.tappedAt ? result.id : null;
+    return result.state === 'ACTIVE' && result.tappedAtObj ? result.id : null;
 }
 
 // Reset tap state
 export function resetTapped() {
     players.forEach((p) => {
-        p.state = 'ACTIVE';
+        if (p.restCount > 1) {
+            p.restCount -= 1;
+        } else {
+            p.restCount = 0;
+            p.state = 'ACTIVE';
+        }
         p.tappedAt = null;
     });
 }
 
 // Change current index
 export function moveQuiz(delta: number) {
+    resetTime();
     quizIndex += delta;
     if (quizIndex > quizzes.length) {
         quizIndex = quizzes.length;
@@ -174,20 +198,30 @@ type QuizResult = {
     index: number;
     question?: string;
     answer?: string;
-    speed?: number;
 };
 
 // Get a quiz of current index
 export function getQuiz(): QuizResult {
     return {
         index: quizIndex,
-        speed: speed,
         ...quizzes[quizIndex - 1],
     };
 }
 
-// Set reading speed
-export function setSpeed(nextSpeed: number): number {
-    speed = nextSpeed >= -1 ? nextSpeed : speed;
-    return speed;
+// Set quiz settings
+export function setSettings(update: QuizSettingsUpdate) {
+    if (update.speed !== undefined && update.speed >= -1) {
+        settings.speed = update.speed;
+    }
+    if (update.correct !== undefined) {
+        settings.correct = update.correct;
+    }
+    if (update.incorrect !== undefined) {
+        settings.incorrect = update.incorrect;
+    }
+}
+
+// Get quiz settings
+export function getSettings() {
+    return settings;
 }

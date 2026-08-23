@@ -22,7 +22,6 @@ function usePlayerSocket() {
         sendMessage({
             type: 'C2S_JOIN',
             payload: {
-                // [TODO] Setting data
                 name: name !== '' ? name : undefined,
                 id: id ?? undefined,
                 key: key ?? undefined,

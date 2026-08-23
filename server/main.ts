@@ -5,14 +5,16 @@ import {
     deleteSocket,
     deleteViewSocket,
     getIdBySocket,
-    sendToHost,
     sendToHostAndView,
-    sendToView,
     tryRegisterHostSocket,
     tryRegisterViewSocket,
 } from './connectionManager.ts';
-import { getPlayersAll, getQuiz, loadQuiz, setIsOnline } from './gameMaster.ts';
-import { hostMessageHandler, playerMessageHandler } from './messageHandler.ts';
+import { getPlayersAll, loadQuiz, setIsOnline } from './gameMaster.ts';
+import {
+    hostMessageHandler,
+    playerMessageHandler,
+    sendInitialData,
+} from './messageHandler.ts';
 
 loadQuiz();
 
@@ -69,17 +71,7 @@ Deno.serve((request: Request) => {
                     const result = tryRegisterHostSocket(socket);
                     if (result) {
                         console.log('[Log] A host connected');
-                        const quiz = getQuiz();
-                        sendToHost({
-                            type: 'S2C_VIEW_UPDATE',
-                            payload: {
-                                index: quiz.index,
-                                question: quiz.question,
-                                answer: quiz.answer,
-                                speed: quiz.speed,
-                                players: getPlayersAll(),
-                            },
-                        });
+                        sendInitialData();
                     } else {
                         console.warn('[Warn] A host already connected');
                         socket.close(4002, 'DUPLICATE_CONNECTION');
@@ -113,17 +105,7 @@ Deno.serve((request: Request) => {
                     const result = tryRegisterViewSocket(socket);
                     if (result) {
                         console.log('[Log] A view connected');
-                        const quiz = getQuiz();
-                        sendToView({
-                            type: 'S2C_VIEW_UPDATE',
-                            payload: {
-                                index: quiz.index,
-                                question: quiz.question,
-                                answer: quiz.answer,
-                                speed: quiz.speed,
-                                players: getPlayersAll(),
-                            },
-                        });
+                        sendInitialData();
                     } else {
                         console.warn('[Warn] A view already connected');
                         socket.close(4002, 'DUPLICATE_CONNECTION');

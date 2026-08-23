@@ -17,7 +17,8 @@ import {
     getAnswererId,
     setTime,
     resetTapped,
-    setSpeed,
+    setSettings,
+    getSettings,
 } from './gameMaster.ts';
 
 // Process messages from players
@@ -132,14 +133,12 @@ export function hostMessageHandler(message: ClientMessage) {
                 }
 
                 case 'NEXT_QUESTION': {
-                    setTime();
                     moveQuiz(1);
                     sendQuiz();
                     break;
                 }
 
                 case 'BEFORE_QUESTION': {
-                    setTime();
                     moveQuiz(-1);
                     sendQuiz();
                     break;
@@ -167,16 +166,12 @@ export function hostMessageHandler(message: ClientMessage) {
 
         // Change settings by the host
         case 'C2S_HOST_CHANGE_SETTINGS': {
-            // Change reading speed
-            if (message.payload.speed !== undefined) {
-                const speed = setSpeed(message.payload.speed);
-                sendToHostAndView({
-                    type: 'S2C_VIEW_UPDATE',
-                    payload: {
-                        speed: speed,
-                    },
-                });
-            }
+            setSettings(message.payload);
+            const update = getSettings();
+            sendToHostAndView({
+                type: 'S2C_VIEW_UPDATE',
+                payload: { ...update },
+            });
             break;
         }
 
@@ -242,8 +237,17 @@ export function hostMessageHandler(message: ClientMessage) {
     }
 }
 
+export function sendInitialData() {
+    sendToHostAndView({
+        type: 'S2C_VIEW_UPDATE',
+        payload: {
+            ...getQuiz(),
+            ...getSettings(),
+            players: getPlayersAll(),
+        },
+    });
+}
 function sendQuiz() {
-    const quiz = getQuiz();
     sendToView({
         type: 'S2C_VIEW_ACTION',
         payload: {
@@ -253,10 +257,7 @@ function sendQuiz() {
     sendToHostAndView({
         type: 'S2C_VIEW_UPDATE',
         payload: {
-            index: quiz.index,
-            question: quiz.question,
-            answer: quiz.answer,
-            speed: quiz.speed,
+            ...getQuiz(),
             players: getPlayersAll(),
         },
     });

@@ -2,7 +2,7 @@ import useHostSocket from '../../hook/useHostSocket';
 import styles from './HostPage.module.css';
 
 function HostPage() {
-    const { action, quiz, isConnected, players } = useHostSocket();
+    const { actions, settings, quiz, isConnected, players } = useHostSocket();
 
     return (
         <div className={styles.container}>
@@ -20,19 +20,46 @@ function HostPage() {
                                 type="number"
                                 value={quiz.speed ?? ''}
                                 onChange={(e) =>
-                                    action.changeSpeed(
+                                    settings.changeSpeed(
                                         parseFloat(e.currentTarget.value),
                                     )
                                 }
                             />
                         </div>
+                        <div>
+                            Point:
+                            <div>
+                                ⭕️
+                                <input
+                                    type="number"
+                                    value={quiz.correct ?? ''}
+                                    onChange={(e) =>
+                                        settings.changeCorrectPoint(
+                                            parseFloat(e.currentTarget.value),
+                                        )
+                                    }
+                                />
+                            </div>
+                            <div>
+                                ✖️
+                                <input
+                                    type="number"
+                                    value={quiz.incorrect ?? ''}
+                                    onChange={(e) =>
+                                        settings.changeIncorrectPoint(
+                                            parseFloat(e.currentTarget.value),
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
                         <div className={styles.control}>
-                            <button onClick={action.prev}>⏮️</button>
-                            <button onClick={action.start}>▶️</button>
-                            <button onClick={action.pause}>⏸️</button>
-                            <button onClick={action.stop}>⏹️</button>
-                            <button onClick={action.next}>⏭️</button>
-                            <button onClick={action.reset}>🔄</button>
+                            <button onClick={actions.prev}>⏮️</button>
+                            <button onClick={actions.start}>▶️</button>
+                            <button onClick={actions.pause}>⏸️</button>
+                            <button onClick={actions.stop}>⏹️</button>
+                            <button onClick={actions.next}>⏭️</button>
+                            <button onClick={actions.reset}>🔄</button>
                         </div>
                         <div>
                             Sound: <a href="https://otologic.jp/">OtoLogic</a>
@@ -48,11 +75,15 @@ function HostPage() {
                                     </div>
                                     <div>{player.score}</div>
                                     <div>
-                                        {
-                                            player.isOnline
-                                                ? player.state
-                                                : 'OFFLINE' /* [TODO] Tapped time */
-                                        }
+                                        {!player.isOnline
+                                            ? 'OFFLINE'
+                                            : player.state === 'REST'
+                                              ? `REST ${player.restCount}`
+                                              : player.tappedAt !== null
+                                                ? (
+                                                      player.tappedAt / 1000
+                                                  ).toFixed(2)
+                                                : player.state}
                                     </div>
                                     <div>
                                         {player.correct}⭕️ {player.incorrect}✖️
@@ -60,13 +91,13 @@ function HostPage() {
                                     <div className={styles.buttons}>
                                         <button
                                             onClick={() =>
-                                                action.mark(player.id, true)
+                                                actions.mark(player.id, true)
                                             }>
                                             ⭕️
                                         </button>
                                         <button
                                             onClick={() =>
-                                                action.mark(player.id, false)
+                                                actions.mark(player.id, false)
                                             }>
                                             ✖️
                                         </button>
