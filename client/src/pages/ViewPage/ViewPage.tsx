@@ -91,10 +91,6 @@ function ViewPage() {
 
     return (
         <div className={styles.container}>
-            {/* <audio src="./sound/correct.mp3" />
-            <audio src="./sound/incorrect.mp3" />
-            <audio src="./sound/quiz.mp3" />
-            <audio src="./sound/tap.mp3" /> */}
             {isConnected ? (
                 <>
                     <div className={styles.figure}>
@@ -145,7 +141,7 @@ function ViewPage() {
                                 ref={questionTextHandleRef}
                                 className={styles.question}
                                 text={quiz.question ?? ''}
-                                speed={quiz.speed ?? 5}
+                                speed={quiz.speed ?? -1}
                                 isReading={isReading}
                             />
                             <AnswerText
@@ -163,22 +159,32 @@ function ViewPage() {
                             </button>
                         </div>
                     )}
-                    <div className={styles.cards}>
-                        {players
-                            .sort((a, b) => a.score - b.score)
-                            .map((player, index) => {
-                                return (
-                                    <div key={index} className={styles.card}>
-                                        <div className={styles.name}>
-                                            <div>{player.name}</div>
+                    {players.length > 0 && (
+                        <div className={styles.cards}>
+                            {players
+                                .sort((a, b) => a.score - b.score)
+                                .map((player, index) => {
+                                    return (
+                                        <div
+                                            key={index}
+                                            className={styles.card}
+                                            data-state={player.state}
+                                            data-online={
+                                                player.isOnline
+                                                    ? 'ONLINE'
+                                                    : 'OFFLINE'
+                                            }>
+                                            <div className={styles.name}>
+                                                <div>{player.name}</div>
+                                            </div>
+                                            <div className={styles.score}>
+                                                <div>{player.score}</div>
+                                            </div>
                                         </div>
-                                        <div className={styles.score}>
-                                            <div>{player.score}</div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                    </div>
+                                    );
+                                })}
+                        </div>
+                    )}
                 </>
             ) : (
                 <p>Connection error</p>

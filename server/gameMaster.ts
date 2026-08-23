@@ -5,6 +5,7 @@ let quizzes: { question: string; answer: string }[] = [];
 let quizIndex: number = 0;
 const correctScore: number = 10;
 const incorrectScore: number = -10;
+let speed: number = 10;
 
 let startTime: Temporal.Instant | null = null;
 
@@ -146,7 +147,6 @@ export function getAnswererId(): string | null {
         }
         return min;
     });
-    console.log(result);
     return result.state === 'ACTIVE' && result.tappedAt ? result.id : null;
 }
 
@@ -174,12 +174,20 @@ type QuizResult = {
     index: number;
     question?: string;
     answer?: string;
+    speed?: number;
 };
 
 // Get a quiz of current index
 export function getQuiz(): QuizResult {
     return {
         index: quizIndex,
+        speed: speed,
         ...quizzes[quizIndex - 1],
     };
+}
+
+// Set reading speed
+export function setSpeed(nextSpeed: number): number {
+    speed = nextSpeed >= -1 ? nextSpeed : speed;
+    return speed;
 }

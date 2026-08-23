@@ -42,6 +42,14 @@ export type ClientMessage =
           };
       }
 
+    // Change settings by the host
+    | {
+          type: 'C2S_HOST_CHANGE_SETTINGS';
+          payload: {
+              speed?: number;
+          };
+      }
+
     // Actions for a player by the host
     | {
           type: 'C2S_HOST_PLAYER_ACTION';

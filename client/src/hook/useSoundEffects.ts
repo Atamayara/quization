@@ -23,7 +23,6 @@ function useSoundEffects() {
 
     // Play sound effects
     function play(key: string) {
-        console.log(key);
         const context = getContext();
         const buffer = buffersRef.current.get(key);
         if (!buffer) {

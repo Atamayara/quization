@@ -1,6 +1,8 @@
 .container {
     display: grid;
-    grid-template-columns: 8fr 2fr;
+    &:has(> .cards) {
+        grid-template-columns: 8fr 2fr;
+    }
 }
 
 .figure {
@@ -153,6 +155,18 @@
 
         > .score {
             font-size: 1.5rem;
+        }
+
+        &:not([data-state='ACTIVE']) {
+            > .name {
+                background-color: #37f;
+            }
+        }
+
+        &:not([data-online='ONLINE']) {
+            > .name {
+                background-color: #999;
+            }
         }
     }
 }

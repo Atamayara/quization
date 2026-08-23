@@ -47,6 +47,13 @@ const QuestionText = forwardRef<QuestionTextHandle, QuestionTextArgs>(
 
             if (!isReading) return;
 
+            if (speed < 0) {
+                if (textBoxRef.current) {
+                    textBoxRef.current.textContent = text;
+                }
+                return;
+            }
+
             // Show question char by char
             function step() {
                 if (textBoxRef.current) {

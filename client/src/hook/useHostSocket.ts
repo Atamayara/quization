@@ -114,6 +114,16 @@ function useHostSocket() {
         });
     }
 
+    // Change reading speed
+    function changeSpeed(speed: number) {
+        sendMessage({
+            type: 'C2S_HOST_CHANGE_SETTINGS',
+            payload: {
+                speed: speed,
+            },
+        });
+    }
+
     return {
         action: {
             mark,
@@ -123,6 +133,7 @@ function useHostSocket() {
             next,
             prev,
             reset,
+            changeSpeed,
         },
         quiz: {
             index,
