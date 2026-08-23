@@ -167,7 +167,13 @@ function ViewPage() {
                                     return (
                                         <div
                                             key={index}
-                                            className={styles.card}>
+                                            className={styles.card}
+                                            data-state={player.state}
+                                            data-online={
+                                                player.isOnline
+                                                    ? 'ONLINE'
+                                                    : 'OFFLINE'
+                                            }>
                                             <div className={styles.name}>
                                                 <div>{player.name}</div>
                                             </div>
