@@ -35,8 +35,8 @@ interface InternalPlayer extends Player {
 // Convert InternalPlayer to Player
 function removePlayerKey(player: InternalPlayer): Player {
     // deno-lint-ignore no-unused-vars
-    const { key, tappedAtObj: tappedAtObject, ...result } = player;
-    const time = tappedAtObject?.total({ unit: 'millisecond' });
+    const { key, tappedAtObj, ...result } = player;
+    const time = tappedAtObj?.total({ unit: 'millisecond' });
     return { ...result, tappedAt: time ? time : null };
 }
 
@@ -165,6 +165,10 @@ export function getAnswererId(): string | null {
         }
         return min;
     });
+    // console.log(players);
+    // console.log(
+    //     result.state === 'ACTIVE' && result.tappedAtObj ? result.id : null,
+    // );
     return result.state === 'ACTIVE' && result.tappedAtObj ? result.id : null;
 }
 
@@ -177,7 +181,7 @@ export function resetTapped() {
             p.restCount = 0;
             p.state = 'ACTIVE';
         }
-        p.tappedAt = null;
+        p.tappedAtObj = null;
     });
 }
 
@@ -192,6 +196,7 @@ export function moveQuiz(delta: number) {
         quizIndex = 0;
     }
     resetTapped();
+    console.log(players);
 }
 
 type QuizResult = {
