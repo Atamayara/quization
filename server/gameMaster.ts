@@ -8,9 +8,8 @@ const settings = {
     speed: 10,
     correct: 10,
     incorrect: -10,
+    rest: 1,
 };
-
-const restPenalty: number = 1;
 
 let startTime: Temporal.Instant | null = null;
 
@@ -34,8 +33,7 @@ interface InternalPlayer extends Player {
 
 // Convert InternalPlayer to Player
 function removePlayerKey(player: InternalPlayer): Player {
-    // deno-lint-ignore no-unused-vars
-    const { key, tappedAtObj, ...result } = player;
+    const { key: _, tappedAtObj, ...result } = player;
     const time = tappedAtObj?.total({ unit: 'millisecond' });
     return { ...result, tappedAt: time ? time : null };
 }
@@ -113,7 +111,7 @@ export function mark(id: string, result: boolean) {
         } else {
             player.score += settings.incorrect;
             player.state = 'REST';
-            player.restCount = restPenalty;
+            player.restCount = settings.rest;
             player.incorrect++;
         }
     }
