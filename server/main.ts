@@ -105,7 +105,6 @@ Deno.serve((request: Request, info: Deno.ServeHandlerInfo) => {
                 };
 
                 socket.onerror = (error) => console.error('[Error] ', error);
-                break;
             } else {
                 console.warn('[Warn] A host access denied');
                 socket.close(4001, 'ACCESS_DENIED');
@@ -135,7 +134,6 @@ Deno.serve((request: Request, info: Deno.ServeHandlerInfo) => {
                 };
 
                 socket.onerror = (error) => console.error('[Error] ', error);
-                break;
             } else {
                 console.warn('[Warn] A host access denied');
                 socket.close(4001, 'ACCESS_DENIED');

@@ -13,11 +13,20 @@ export interface Player {
 }
 
 // Quiz settings
-export type QuizSettingsUpdate = {
+export interface QuizSettings {
     speed?: number;
     correct?: number;
     incorrect?: number;
-};
+    rest?: number;
+}
+
+// View settings
+interface ViewSettings extends QuizSettings {
+    index?: number;
+    question?: string;
+    answer?: string;
+    players?: Player[];
+}
 
 // Message sent to a server from clients
 export type ClientMessage =
@@ -53,7 +62,7 @@ export type ClientMessage =
     // Change settings by the host
     | {
           type: 'C2S_HOST_CHANGE_SETTINGS';
-          payload: QuizSettingsUpdate;
+          payload: QuizSettings;
       }
 
     // Actions for a player by the host
@@ -92,15 +101,7 @@ export type ServerMessage =
     // Update view data
     | {
           type: 'S2C_VIEW_UPDATE';
-          payload: {
-              index?: number;
-              question?: string;
-              answer?: string;
-              speed?: number; // Char per seconds (-1: immediately)
-              players?: Player[];
-              correct?: number;
-              incorrect?: number;
-          };
+          payload: ViewSettings;
       }
 
     // Action for view

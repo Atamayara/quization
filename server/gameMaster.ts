@@ -1,4 +1,4 @@
-import { Player, QuizSettingsUpdate } from '../shared/types.ts';
+import { Player, QuizSettings } from '../shared/types.ts';
 
 const players: InternalPlayer[] = [];
 let quizzes: { question: string; answer: string }[] = [];
@@ -164,10 +164,6 @@ export function getAnswererId(): string | null {
         }
         return min;
     });
-    // console.log(players);
-    // console.log(
-    //     result.state === 'ACTIVE' && result.tappedAtObj ? result.id : null,
-    // );
     return result.state === 'ACTIVE' && result.tappedAtObj ? result.id : null;
 }
 
@@ -195,7 +191,6 @@ export function moveQuiz(delta: number) {
         quizIndex = 0;
     }
     resetTapped();
-    console.log(players);
 }
 
 type QuizResult = {
@@ -213,7 +208,7 @@ export function getQuiz(): QuizResult {
 }
 
 // Set quiz settings
-export function setSettings(update: QuizSettingsUpdate) {
+export function setSettings(update: QuizSettings) {
     if (update.speed !== undefined && update.speed >= -1) {
         settings.speed = update.speed;
     }
@@ -222,6 +217,9 @@ export function setSettings(update: QuizSettingsUpdate) {
     }
     if (update.incorrect !== undefined) {
         settings.incorrect = update.incorrect;
+    }
+    if (update.rest !== undefined) {
+        settings.rest = update.rest;
     }
 }
 

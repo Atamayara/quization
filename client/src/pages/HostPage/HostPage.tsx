@@ -27,6 +27,18 @@ function HostPage() {
                             />
                         </div>
                         <div>
+                            Rest:{' '}
+                            <input
+                                type="number"
+                                value={quiz.rest ?? ''}
+                                onChange={(e) =>
+                                    settings.changeRest(
+                                        parseInt(e.currentTarget.value),
+                                    )
+                                }
+                            />
+                        </div>
+                        <div>
                             Point:
                             <div>
                                 ⭕️
