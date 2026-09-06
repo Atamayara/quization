@@ -13,6 +13,7 @@ const settings = {
 
 let startTime: Temporal.Instant | null = null;
 
+// Load quiz files
 export function loadQuiz() {
     Deno.readTextFile('./quiz.tsv')
         .then((text) => {

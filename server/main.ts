@@ -18,7 +18,19 @@ import {
 
 loadQuiz();
 
-Deno.serve((request: Request) => {
+Deno.serve((request: Request, info: Deno.ServeHandlerInfo) => {
+    // Get remote IP
+    let isLocalhost;
+    try {
+        const addr = info.remoteAddr;
+        if (addr && addr.transport === 'tcp') {
+            isLocalhost =
+                addr.hostname === '127.0.0.1' || addr.hostname === '::1';
+        }
+    } catch {
+        isLocalhost = false;
+    }
+
     // Access to pages
     const url = new URL(request.url);
     if (request.headers.get('upgrade') !== 'websocket') {
@@ -37,7 +49,7 @@ Deno.serve((request: Request) => {
 
     switch (url.pathname) {
         // Connection with players
-        case '/ws/player':
+        case '/ws/player': {
             socket.onopen = () => console.log('[Log] A player connected');
 
             socket.onmessage = (event) => {
@@ -63,10 +75,11 @@ Deno.serve((request: Request) => {
 
             socket.onerror = (error) => console.error('[Error] ', error);
             break;
+        }
 
         // Connection with a host
-        case '/ws/host':
-            if (url.hostname === 'localhost') {
+        case '/ws/host': {
+            if (isLocalhost) {
                 socket.onopen = () => {
                     const result = tryRegisterHostSocket(socket);
                     if (result) {
@@ -94,13 +107,15 @@ Deno.serve((request: Request) => {
                 socket.onerror = (error) => console.error('[Error] ', error);
                 break;
             } else {
+                console.warn('[Warn] A host access denied');
                 socket.close(4001, 'ACCESS_DENIED');
             }
             break;
+        }
 
         // Connection with a view (Sending only)
-        case '/ws/view':
-            if (url.hostname === 'localhost') {
+        case '/ws/view': {
+            if (isLocalhost) {
                 socket.onopen = () => {
                     const result = tryRegisterViewSocket(socket);
                     if (result) {
@@ -121,8 +136,12 @@ Deno.serve((request: Request) => {
 
                 socket.onerror = (error) => console.error('[Error] ', error);
                 break;
+            } else {
+                console.warn('[Warn] A host access denied');
+                socket.close(4001, 'ACCESS_DENIED');
             }
             break;
+        }
     }
 
     return response;
