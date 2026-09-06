@@ -15,6 +15,7 @@ function useHostSocket() {
     const [speed, setSpeed] = useState<number>();
     const [correct, setCorrect] = useState<number>();
     const [incorrect, setIncorrect] = useState<number>();
+    const [rest, setRest] = useState<number>();
     const [players, setPlayers] = useState<Player[]>([]);
 
     // Process message from the server
@@ -45,6 +46,9 @@ function useHostSocket() {
                 }
                 if (message.payload.incorrect !== undefined) {
                     setIncorrect(message.payload.incorrect);
+                }
+                if (message.payload.rest !== undefined) {
+                    setRest(message.payload.rest);
                 }
                 break;
             }
@@ -152,6 +156,16 @@ function useHostSocket() {
         });
     }
 
+    // Change rest penalty
+    function changeRest(count: number) {
+        sendMessage({
+            type: 'C2S_HOST_CHANGE_SETTINGS',
+            payload: {
+                rest: count,
+            },
+        });
+    }
+
     return {
         actions: {
             mark,
@@ -166,6 +180,7 @@ function useHostSocket() {
             changeSpeed,
             changeCorrectPoint,
             changeIncorrectPoint,
+            changeRest,
         },
         quiz: {
             index,
@@ -174,6 +189,7 @@ function useHostSocket() {
             speed,
             correct,
             incorrect,
+            rest,
         },
         isConnected,
         players,

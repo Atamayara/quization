@@ -1,4 +1,4 @@
-import { Player, QuizSettingsUpdate } from '../shared/types.ts';
+import { Player, QuizSettings } from '../shared/types.ts';
 
 const players: InternalPlayer[] = [];
 let quizzes: { question: string; answer: string }[] = [];
@@ -8,12 +8,12 @@ const settings = {
     speed: 10,
     correct: 10,
     incorrect: -10,
+    rest: 1,
 };
-
-const restPenalty: number = 1;
 
 let startTime: Temporal.Instant | null = null;
 
+// Load quiz files
 export function loadQuiz() {
     Deno.readTextFile('./quiz.tsv')
         .then((text) => {
@@ -34,9 +34,8 @@ interface InternalPlayer extends Player {
 
 // Convert InternalPlayer to Player
 function removePlayerKey(player: InternalPlayer): Player {
-    // deno-lint-ignore no-unused-vars
-    const { key, tappedAtObj: tappedAtObject, ...result } = player;
-    const time = tappedAtObject?.total({ unit: 'millisecond' });
+    const { key: _, tappedAtObj, ...result } = player;
+    const time = tappedAtObj?.total({ unit: 'millisecond' });
     return { ...result, tappedAt: time ? time : null };
 }
 
@@ -113,7 +112,7 @@ export function mark(id: string, result: boolean) {
         } else {
             player.score += settings.incorrect;
             player.state = 'REST';
-            player.restCount = restPenalty;
+            player.restCount = settings.rest;
             player.incorrect++;
         }
     }
@@ -177,7 +176,7 @@ export function resetTapped() {
             p.restCount = 0;
             p.state = 'ACTIVE';
         }
-        p.tappedAt = null;
+        p.tappedAtObj = null;
     });
 }
 
@@ -209,7 +208,7 @@ export function getQuiz(): QuizResult {
 }
 
 // Set quiz settings
-export function setSettings(update: QuizSettingsUpdate) {
+export function setSettings(update: QuizSettings) {
     if (update.speed !== undefined && update.speed >= -1) {
         settings.speed = update.speed;
     }
@@ -218,6 +217,9 @@ export function setSettings(update: QuizSettingsUpdate) {
     }
     if (update.incorrect !== undefined) {
         settings.incorrect = update.incorrect;
+    }
+    if (update.rest !== undefined) {
+        settings.rest = update.rest;
     }
 }
 
