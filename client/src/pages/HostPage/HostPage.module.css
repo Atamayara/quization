@@ -44,6 +44,12 @@
             overflow-x: scroll;
             white-space: nowrap;
         }
+        > .score {
+            > input {
+                text-align: center;
+                width: 50%;
+            }
+        }
         > .buttons {
             > button {
                 width: 1.5rem;

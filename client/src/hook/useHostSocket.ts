@@ -166,6 +166,18 @@ function useHostSocket() {
         });
     }
 
+    // Change score
+    function changeScore(id: string, newScore: number) {
+        sendMessage({
+            type: 'C2S_HOST_PLAYER_ACTION',
+            payload: {
+                action: 'ADJUST_SCORE',
+                id: id,
+                value: isNaN(newScore) ? 0 : newScore,
+            },
+        });
+    }
+
     return {
         actions: {
             mark,
@@ -181,6 +193,7 @@ function useHostSocket() {
             changeCorrectPoint,
             changeIncorrectPoint,
             changeRest,
+            changeScore,
         },
         quiz: {
             index,

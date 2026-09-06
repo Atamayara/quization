@@ -79,44 +79,72 @@ function HostPage() {
                     </div>
 
                     <div className={styles.players}>
-                        {players.map((player, index) => {
-                            return (
-                                <div key={index}>
-                                    <div className={styles.name}>
-                                        {player.name}
+                        {players
+                            .sort((a, b) => {
+                                if (a.isOnline !== b.isOnline) {
+                                    return a.isOnline ? -1 : 1;
+                                }
+                                return b.score - a.score;
+                            })
+                            .map((player, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className={styles.name}>
+                                            {player.name}
+                                        </div>
+                                        <div className={styles.score}>
+                                            <input
+                                                type="number"
+                                                value={player.score}
+                                                onChange={(e) =>
+                                                    settings.changeScore(
+                                                        player.id,
+                                                        parseFloat(
+                                                            e.currentTarget
+                                                                .value,
+                                                        ),
+                                                    )
+                                                }
+                                            />
+                                        </div>
+                                        <div>
+                                            {!player.isOnline
+                                                ? 'OFFLINE'
+                                                : player.state === 'REST'
+                                                  ? `REST ${player.restCount}`
+                                                  : player.tappedAt !== null
+                                                    ? (
+                                                          player.tappedAt / 1000
+                                                      ).toFixed(2)
+                                                    : player.state}
+                                        </div>
+                                        <div>
+                                            {player.correct}⭕️{' '}
+                                            {player.incorrect}✖️
+                                        </div>
+                                        <div className={styles.buttons}>
+                                            <button
+                                                onClick={() =>
+                                                    actions.mark(
+                                                        player.id,
+                                                        true,
+                                                    )
+                                                }>
+                                                ⭕️
+                                            </button>
+                                            <button
+                                                onClick={() =>
+                                                    actions.mark(
+                                                        player.id,
+                                                        false,
+                                                    )
+                                                }>
+                                                ✖️
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div>{player.score}</div>
-                                    <div>
-                                        {!player.isOnline
-                                            ? 'OFFLINE'
-                                            : player.state === 'REST'
-                                              ? `REST ${player.restCount}`
-                                              : player.tappedAt !== null
-                                                ? (
-                                                      player.tappedAt / 1000
-                                                  ).toFixed(2)
-                                                : player.state}
-                                    </div>
-                                    <div>
-                                        {player.correct}⭕️ {player.incorrect}✖️
-                                    </div>
-                                    <div className={styles.buttons}>
-                                        <button
-                                            onClick={() =>
-                                                actions.mark(player.id, true)
-                                            }>
-                                            ⭕️
-                                        </button>
-                                        <button
-                                            onClick={() =>
-                                                actions.mark(player.id, false)
-                                            }>
-                                            ✖️
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
                     </div>
                 </>
             ) : (
