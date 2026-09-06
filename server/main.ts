@@ -19,7 +19,7 @@ import {
 loadQuiz();
 
 Deno.serve((request: Request, info: Deno.ServeHandlerInfo) => {
-    // Get remote IP
+    // Check whether the access is from localhost
     let isLocalhost;
     try {
         const addr = info.remoteAddr;
