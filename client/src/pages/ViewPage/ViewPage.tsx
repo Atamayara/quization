@@ -162,7 +162,12 @@ function ViewPage() {
                     {players.length > 0 && (
                         <div className={styles.cards}>
                             {players
-                                .sort((a, b) => a.score - b.score)
+                                .sort((a, b) => {
+                                    if (a.isOnline !== b.isOnline) {
+                                        return a.isOnline ? -1 : 1;
+                                    }
+                                    return b.score - a.score;
+                                })
                                 .map((player, index) => {
                                     return (
                                         <div
